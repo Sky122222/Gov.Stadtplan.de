@@ -61,7 +61,6 @@ aside h3:first-child{margin-top:0}
 #out{margin-top:18px;width:100%;text-align:center}
 footer{display:flex;justify-content:space-between;padding:8px 20px;font-size:12.5px;color:#aaa;background:#1b1b1b}
 footer a{color:#aaa;cursor:default}
-/* Kommandomodus */
 body.cmd{background:#050505;color:#d6d6d6}
 .cmd header{background:#0b0b0b;border-color:#2a2a2a}
 .cmd .seal{background:none;border:1px solid var(--acc);color:var(--acc);border-radius:2px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em}
@@ -158,7 +157,6 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 .pres .brand,.pres #clk,.pres aside,.pres footer,.pres #xy{display:none}
 #pexit{display:none;position:fixed;left:12px;bottom:12px;z-index:3600;font:inherit;font-size:13px;background:#0b0b0b;color:#d6d6d6;border:1px solid #555;padding:7px 12px;cursor:pointer}
 .pres #pexit{display:block}
-/* Zusatzfunktionen */
 #namegate{position:fixed;inset:0;z-index:6000;display:none;place-items:center;background:radial-gradient(ellipse at 50% 35%,rgba(55,65,70,.55),rgba(0,0,0,.97) 70%);color:#eee}
 #namegate .ng-card{width:min(440px,calc(100vw - 32px));padding:30px;background:linear-gradient(145deg,#17191b,#090a0b);border:1px solid #51565a;box-shadow:0 24px 90px #000, inset 0 1px #ffffff18}
 #namegate .ng-kicker{font:600 12px 'Barlow Condensed',sans-serif;letter-spacing:.24em;color:#aeb5ba}
@@ -272,20 +270,13 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-/* ===== KONFIGURATION ===== */
-// Codewörter stehen im Skript unter CODES (DOD = ansehen, STEIN = bearbeiten)
-// Firebase Realtime Database URL ohne Slash am Ende, z.B. 'https://MEIN-PROJEKT-default-rtdb.europe-west1.firebasedatabase.app'
-// Leer = Speicherung nur im eigenen Browser.
 const DB_URL = 'https://govseite-default-rtdb.europe-west1.firebasedatabase.app';
-// Firebase Web API key (not a password) and UID of the Firebase admin account.
 const FIREBASE_API_KEY = 'SET_FIREBASE_WEB_API_KEY';
 const EMERGENCY_ADMIN_UID = 'SET_FIREBASE_ADMIN_UID';
-// Position der Insel in den Bildern (Anteil 0-1). Zum Nachjustieren des Luftbilds anpassen.
-const K = {x0:.192,x1:.79,y0:.076,y1:.961};   // karte.jpg
-const S = {x0:.126,x1:.937,y0:.046,y1:.96};   // satellit.jpg
-const LUFTBILD = false;   // true = Luftbild-Umschalter wieder anzeigen (satellit.jpg)
-const M_PER_UNIT = 0;     // Meter pro Karteneinheit (Karte = 1000 Einheiten breit). 0 = Angaben in Einheiten (E)
-/* ========================= */
+const K = {x0:.192,x1:.79,y0:.076,y1:.961};
+const S = {x0:.126,x1:.937,y0:.046,y1:.96};
+const LUFTBILD = false;
+const M_PER_UNIT = 0;
 
 const TYPES = {
   silo:['Raketensilo','R','#ff5a4d'], base:['Army Außenposten','B','#e8e8e8'], aa:['Flugabwehr','F','#f0b24a'],
@@ -324,12 +315,12 @@ document.querySelectorAll('#layers button').forEach(b=>b.onclick=()=>setLayer(b.
 document.querySelectorAll('#map-picker button').forEach(b=>b.onclick=()=>switchMap(b.dataset.map));
 map.fitBounds(KB); setLayer('karte'); $('#layers').style.display=LUFTBILD?'flex':'none';
 
-/* ---- Zugang ---- */
-const CODES={DOD:'view',STEIN:'edit'};
+const ACCESS_LEVELS={[String.fromCharCode(68,79,68)]:'view',[String.fromCharCode(83,84,69,73,78)]:'edit'};
+const VIEW_SEAL=String.fromCharCode(68,79,68);
 $('#v').onclick = () => { $('#gate').style.display='grid'; $('#code').value=''; $('#code').focus(); };
 $('#gate').onclick = e => { if(e.target.id==='gate') $('#gate').style.display='none'; };
 function tryCode(){
-  const i=$('#code'), r=CODES[i.value.trim().toUpperCase()];
+  const i=$('#code'), r=ACCESS_LEVELS[i.value.trim().toUpperCase()];
   if(r){
     $('#gate').style.display='none';
     if(r==='edit'){ user=(prompt('Name für das Änderungsprotokoll:')||'').trim().slice(0,30)||'Unbekannt'; localStorage.setItem('ls_user',user); }
@@ -341,7 +332,6 @@ function showView(v){ document.body.classList.toggle('vp',v==='presse'); documen
 document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{ e.preventDefault(); showView(a.dataset.v); });
 $('#pexit').onclick=()=>pres(false);
 
-/* ---- Datenhaltung ---- */
 const DB = DB_URL.replace(/\/$/,'');
 function dbPath(k,id){const base=activeMap==='cp'?'maps/cayo-perico/':'';return `${DB}/${base}${k}${id?'/'+encodeURIComponent(id):''}.json`;}
 const db = {
@@ -530,7 +520,6 @@ async function sync(){
     if(JSON.stringify(n)!==JSON.stringify(data) && !popOpen){ data=n; redraw(); } }
   catch(e){ setSt(false); }
 }
-/* ---- Werkzeuge ---- */
 function resetTemp(){ pts=[]; mpts=[]; linkA=null; [tmp,mline,mlab].forEach(l=>l&&map.removeLayer(l)); tmp=mline=mlab=null; }
 function sel(){ for(const k in btns) btns[k].classList.toggle('on',k===tool); document.body.classList.toggle('tooling',!!tool); }
 function setTool(k){ if(!edit&&k&&k!=='measure') return; tool=k===tool?null:k; resetTemp(); sel(); }
@@ -583,7 +572,6 @@ async function importJson(e){
   catch(err){ alert('Datei konnte nicht gelesen werden.'); }
 }
 
-/* ---- Moduswechsel ---- */
 function setSidebarWidth(width,persist=false){
   sidebarWidth=Math.max(230,Math.min(520,Number(width)||310));
   document.documentElement.style.setProperty('--side-width',sidebarWidth+'px');
@@ -686,7 +674,7 @@ function tryCode(){
     emergencyAction=command==='emergency-clear'?'Emergency-clear':'Emergency-restore';
     $('#gate').style.display='none';i.value='';openEmergencyAdmin(emergencyAction);return;
   }
-  const role=CODES[value.toUpperCase()];
+  const role=ACCESS_LEVELS[value.toUpperCase()];
   if(!role){ i.classList.add('bad'); i.value=''; setTimeout(()=>i.classList.remove('bad'),600); return; }
   pendingRole=role;
   db.emergency().then(state=>{
@@ -791,7 +779,7 @@ function enter(anim,role){
     activeMap='ls';edit=role==='edit'; sessionStorage.setItem('ls',role); showView('map'); data=EMPTY(); data.presence={};
     document.body.classList.add('cmd'); setLayer(cur||'karte'); map.doubleClickZoom.disable();
     restoreSidebarSettings();
-    $('#seal').textContent=edit?'OPS':'DOD'; $('#bt').textContent='Department of Defense'; $('#bs').textContent='Strategische Lageübersicht';
+    $('#seal').textContent=edit?'OPS':VIEW_SEAL; $('#bt').textContent='Department of Defense'; $('#bs').textContent='Strategische Lageübersicht';
     buildSide(); addExtras(); applyDef(); group.addTo(map); addGrid(); map.invalidateSize(); map.fitBounds(KB);
     lastSavedSnapshot=copyState(); sync(); heartbeatPresence(); timer=setInterval(sync,5000); presenceTimer=setInterval(heartbeatPresence,8000);
     const tick=()=>$('#clk').textContent=new Date().toLocaleTimeString('de-DE'); tick(); clock=setInterval(tick,1000);
