@@ -111,11 +111,46 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 .pres .brand,.pres #clk,.pres aside,.pres footer,.pres #xy{display:none}
 #pexit{display:none;position:fixed;left:12px;bottom:12px;z-index:3600;font:inherit;font-size:13px;background:#0b0b0b;color:#d6d6d6;border:1px solid #555;padding:7px 12px;cursor:pointer}
 .pres #pexit{display:block}
+/* Zusatzfunktionen */
+#namegate{position:fixed;inset:0;z-index:6000;display:none;place-items:center;background:radial-gradient(ellipse at 50% 35%,rgba(55,65,70,.55),rgba(0,0,0,.97) 70%);color:#eee}
+#namegate .ng-card{width:min(440px,calc(100vw - 32px));padding:30px;background:linear-gradient(145deg,#17191b,#090a0b);border:1px solid #51565a;box-shadow:0 24px 90px #000, inset 0 1px #ffffff18}
+#namegate .ng-kicker{font:600 12px 'Barlow Condensed',sans-serif;letter-spacing:.24em;color:#aeb5ba}
+#namegate h2{margin:8px 0;font:600 28px 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase}
+#namegate p{color:#9ba1a5;font-size:13px;margin:0 0 20px}
+#namegate input{width:100%;padding:12px;background:#0a0b0c;border:1px solid #51565a;color:#fff;font:inherit;outline:0}
+#namegate input:focus{border-color:#d6dde0;box-shadow:0 0 0 2px #ffffff18}
+#namegate .ng-error{min-height:20px;margin-top:6px;color:#ff9b9b;font-size:12px}
+#namegate button{width:100%;padding:11px;background:#e7eaeb;color:#111;border:0;font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+#logo1{display:none;width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 0 12px #fff3)}
+.cmd #logo1,.boot-logo #logo1{display:block}
+.boot-logo{position:fixed;right:5vw;top:5vh;z-index:5001;width:90px;height:90px;display:grid;place-items:center;border:1px solid #6f787d;background:#090b0ddd;animation:logoIn .7s ease-out both}
+.boot-logo svg{width:60px;height:60px}
+#boot{padding-top:18vh;background:radial-gradient(ellipse at 78% 14%,#273039 0,#090b0e 34%,#000 75%);font-size:clamp(17px,2.4vw,25px);text-shadow:0 0 12px #9ee8bf66}
+#boot:after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#fff000 0 1px,transparent 1px 4px);opacity:.035}
+@keyframes logoIn{from{opacity:0;transform:translateY(-12px) scale(.8)}to{opacity:1;transform:none}}
+.cmd .brand{gap:9px}
+.cmd #logo1{width:34px;height:34px}
+.cmd .leaflet-image-layer{filter:grayscale(.72) sepia(.18) hue-rotate(145deg) saturate(.72) brightness(.53) contrast(1.2)}
+.cmd #map{background:#071116}
+.cmd #mapwrap::after{background:linear-gradient(rgba(119,205,190,.075) 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,rgba(119,205,190,.075) 1px,transparent 1px) 0 0/56px 56px,radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.78))}
+.cmd aside{background:linear-gradient(180deg,#111719,#090b0c);border-color:#344044}
+.cmd header{background:linear-gradient(90deg,#121719,#090b0c);border-color:#344044}
+#side .extra-row{display:flex;gap:6px;margin:7px 0}
+#search{width:100%;padding:8px;background:#111516;border:1px solid #363e41;color:#eee;font:inherit}
+#online{font-size:12px;color:#aeb5ba;line-height:1.55}
+#online .person{display:flex;align-items:center;gap:7px}
+#online .dot{width:7px;height:7px;border-radius:50%;background:#a4d6b8;box-shadow:0 0 8px #a4d6b8}
+#grid-toggle{accent-color:#a4d6b8}
+#sound-toggle{font-size:12px;color:#aaa}
+.leaflet-div-icon.grid-label{background:transparent;border:0}
+.grid-label span{font:500 11px 'Barlow Condensed',sans-serif;letter-spacing:.12em;color:#e8f4ed;text-shadow:0 1px 3px #000,0 0 7px #000}
+.vertex-handle{width:12px;height:12px;background:#fff;border:2px solid #111;border-radius:50%;box-shadow:0 0 0 2px #fff8}
+@media(max-width:800px){#namegate .ng-card{padding:24px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><span class="seal" id="seal">LS</span><div><b id="bt">Los Santos Government</b><small id="bs">Amt für Stadtplanung und Geoinformation</small></div></div>
+  <div class="brand"><img id="logo1" src="logo1.png" alt="Logo 1"><span class="seal" id="seal">LS</span><div><b id="bt">Los Santos Government</b><small id="bs">Amt für Stadtplanung und Geoinformation</small></div></div>
   <nav><a href="#" data-v="map" class="on">Stadtplan</a><a href="#" data-v="presse">Pressemitteilungen</a></nav>
   <div id="def"></div><div id="clk"></div>
 </header>
@@ -130,6 +165,7 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 </main>
 <footer><span>© Los Santos Government</span><a id="v">Version 3.2.1</a></footer>
 <div id="gate"><div><input id="code" type="password" placeholder="Zugangscode" autocomplete="off"><button id="go">OK</button></div></div>
+<div id="namegate"><div class="ng-card"><div class="ng-kicker">LOS SANTOS · COMMAND NETWORK</div><h2>Identität bestätigen</h2><p>Bitte gib deinen vollständigen Namen für Anwesenheitsanzeige und Änderungsprotokoll ein.</p><input id="full-name" maxlength="60" autocomplete="name" placeholder="Vor- und Nachname"><div class="ng-error" id="name-error"></div><button id="name-submit">Verbindung herstellen</button></div></div>
 <div id="alarm"></div><button id="pexit">Präsentation beenden</button>
 <div id="boot"></div>
 
@@ -264,6 +300,11 @@ function redraw(){
         L.marker(b,{interactive:false,icon:L.divIcon({className:'',html:`<div class="ah" style="color:${o.c};transform:rotate(${deg}deg)">▶</div>`,iconSize:[20,20],iconAnchor:[10,10]})}).addTo(group); }
     }
     sh[id]=g.bindPopup(()=>popSh(id)).addTo(group);
+    if(edit&&['line','zone','arrow'].includes(o.k)) o.p.forEach((q,i)=>{
+      const h=L.marker(pt(q[0],q[1]),{draggable:true,icon:L.divIcon({className:'',html:'<div class="vertex-handle"></div>',iconSize:[12,12],iconAnchor:[6,6]}),zIndexOffset:1000}).addTo(group);
+      h.on('click',L.DomEvent.stopPropagation);
+      h.on('dragend',async()=>{ const p=h.getLatLng(); o.p[i]=[p.lng/1000,1-p.lat/1000]; await write(()=>db.put('shapes',id,o)); logit(`${KINDS[o.k]} „${o.n}“: Punkt verschoben`); redraw(); });
+    });
   }
   renderList(); renderLog(); applyDef();
 }
@@ -380,23 +421,167 @@ function boot(done){
   let i=0; const t=setInterval(()=>{ if(i<lines.length){ b.textContent+=lines[i++]+'\n'; } else { clearInterval(t); b.style.opacity=0; setTimeout(()=>{ b.style.display='none'; done(); },500); } },
     matchMedia('(prefers-reduced-motion:reduce)').matches?10:450);
 }
+let pendingRole=null, presenceTimer=null, presenceId=newId(), gridLayer=L.layerGroup(), undoStack=[], lastSavedSnapshot=null, audioCtx=null, soundsOn=localStorage.getItem('ls_sounds')!=='off';
+function copyState(){ return JSON.parse(JSON.stringify({markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{}})); }
+function stateEqual(a,b){ return JSON.stringify(a)===JSON.stringify(b); }
+function playTone(kind='click'){
+  if(!soundsOn) return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return;
+    audioCtx=audioCtx||new AC(); if(audioCtx.state==='suspended') audioCtx.resume();
+    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(), now=audioCtx.currentTime;
+    const f=kind==='login'?520:kind==='alarm'?260:kind==='tap'?680:760;
+    osc.type=kind==='alarm'?'triangle':'sine'; osc.frequency.setValueAtTime(f,now);
+    if(kind==='alarm') osc.frequency.exponentialRampToValueAtTime(520,now+.13);
+    gain.gain.setValueAtTime(.0001,now); gain.gain.exponentialRampToValueAtTime(kind==='click' ? 0.025 : 0.045,now+.012); gain.gain.exponentialRampToValueAtTime(.0001,now+(kind==='alarm' ? .16 : .07));
+    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now+(kind==='alarm'?.18:.09));
+  }catch(e){ console.warn('Sound konnte nicht abgespielt werden.',e); }
+}
+document.addEventListener('click',e=>{ if(e.target.closest('button,a')) playTone(); },true);
+map.on('click',()=>{ if(cmd()) playTone('tap'); });
+$('#name-submit').onclick=submitName;
+$('#full-name').onkeydown=e=>{ if(e.key==='Enter') submitName(); };
+function submitName(){
+  const field=$('#full-name'), name=field.value.trim().replace(/\s+/g,' ');
+  if(name.split(' ').filter(Boolean).length<2){ $('#name-error').textContent='Bitte Vor- und Nachnamen eingeben.'; field.focus(); return; }
+  user=name.slice(0,60); localStorage.setItem('ls_user',user); $('#namegate').style.display='none'; playTone('login'); enter(true,pendingRole); pendingRole=null;
+}
+function tryCode(){
+  const i=$('#code'), role=CODES[i.value.trim().toUpperCase()];
+  if(!role){ i.classList.add('bad'); i.value=''; setTimeout(()=>i.classList.remove('bad'),600); return; }
+  pendingRole=role; $('#gate').style.display='none'; $('#name-error').textContent='';
+  $('#full-name').value=localStorage.getItem('ls_user')||''; $('#namegate').style.display='grid'; setTimeout(()=>$('#full-name').focus(),0);
+}
+function boot(done){
+  const b=$('#boot'), logo=el('div'); logo.className='boot-logo';
+  logo.innerHTML=$('#logo1').outerHTML; document.body.append(logo); b.style.display='block'; b.style.opacity=1; b.textContent='';
+  const lines=['LS GOVERNMENT · SECURE ACCESS NODE','AUTHENTICATION .............. VERIFIED','COMMAND NETWORK .............. ONLINE','SYNCHRONIZING TACTICAL DISPLAY'];
+  let i=0; const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches, t=setInterval(()=>{
+    if(i<lines.length){ b.textContent+=lines[i++]+'\n'; }
+    else{ clearInterval(t); b.style.opacity=0; setTimeout(()=>{ b.style.display='none'; logo.remove(); done(); },reduced?0:500); }
+  },reduced?20:520);
+}
+function addGrid(){
+  gridLayer.clearLayers();
+  for(let i=0;i<=10;i++){
+    const x=i*100, y=i*100;
+    L.polyline([pt(x/1000,0),pt(x/1000,1)],{color:'#c8e3d2',weight:1,opacity:.2,interactive:false}).addTo(gridLayer);
+    L.polyline([pt(0,y/1000),pt(1,y/1000)],{color:'#c8e3d2',weight:1,opacity:.2,interactive:false}).addTo(gridLayer);
+  }
+  for(let row=0;row<10;row++) for(let col=0;col<10;col++){
+    const label=String.fromCharCode(65+col)+'-'+(row+1), icon=L.divIcon({className:'grid-label',html:`<span>${label}</span>`,iconSize:[32,14],iconAnchor:[16,7]});
+    L.marker(pt((col+.5)/10,(row+.5)/10),{icon,interactive:false,keyboard:false}).addTo(gridLayer);
+  }
+}
+function addExtras(){
+  const s=$('#side'), search=el('input'); search.id='search'; search.placeholder='Einträge suchen…'; search.setAttribute('aria-label','Einträge suchen');
+  search.oninput=()=>document.querySelectorAll('#list a').forEach(a=>a.style.display=a.textContent.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())?'flex':'none');
+  const people=el('div'); people.id='online';
+  const gridRow=el('label'); gridRow.className='extra-row'; const cb=el('input'); cb.type='checkbox'; cb.id='grid-toggle'; cb.onchange=()=>cb.checked?gridLayer.addTo(map):map.removeLayer(gridLayer);
+  gridRow.append(cb,el('span','Raster A-1 bis J-10'));
+  const soundRow=el('label'); soundRow.className='extra-row'; const sc=el('input'); sc.type='checkbox'; sc.checked=soundsOn; sc.onchange=()=>{soundsOn=sc.checked;localStorage.setItem('ls_sounds',soundsOn?'on':'off');};
+  soundRow.append(sc,el('span','Töne'));
+  const und=btn('Rückgängig',undo); und.id='undo-btn'; und.disabled=true;
+  const h=el('h3','Suche'); s.prepend(search,h);
+  s.append(el('h3','Raster & Ton'),gridRow,soundRow,el('h3','Online'),people,und);
+}
+function renderOnline(){
+  const box=$('#online'); if(!box) return;
+  box.replaceChildren();
+  const now=Date.now(), active=Object.values(data.presence||{}).filter(p=>p&&p.name&&now-(+p.t||0)<25000).sort((a,b)=>a.name.localeCompare(b.name));
+  if(!active.length){ box.textContent='Niemand verbunden.'; return; }
+  active.forEach(p=>{ const row=el('div'); row.className='person'; const dot=el('i'); dot.className='dot'; row.append(dot,el('span',p.name+(p.role==='edit'?' · Bearbeitung':' · Zuschauer'))); box.append(row); });
+}
+async function heartbeatPresence(){
+  if(!cmd()) return;
+  try{ await db.put('presence',presenceId,{name:user,role:edit?'edit':'view',t:Date.now()}); }
+  catch(e){ setSt(false); }
+}
 function enter(anim,role){
   const go=()=>{
-    edit=role==='edit'; sessionStorage.setItem('ls',role); showView('map'); data=EMPTY();
+    edit=role==='edit'; sessionStorage.setItem('ls',role); showView('map'); data=EMPTY(); data.presence={};
     document.body.classList.add('cmd'); map.doubleClickZoom.disable();
-    $('#seal').textContent='DOD'; $('#bt').textContent='Joint Defense Command'; $('#bs').textContent='Strategische Lageübersicht';
-    buildSide(); applyDef(); group.addTo(map); map.invalidateSize(); map.fitBounds(KB); sync(); timer=setInterval(sync,5000);
+    $('#seal').textContent=edit?'OPS':'DOD'; $('#bt').textContent='Joint Defense Command'; $('#bs').textContent='Strategische Lageübersicht';
+    buildSide(); addExtras(); applyDef(); group.addTo(map); addGrid(); map.invalidateSize(); map.fitBounds(KB);
+    lastSavedSnapshot=copyState(); sync(); heartbeatPresence(); timer=setInterval(sync,5000); presenceTimer=setInterval(heartbeatPresence,8000);
     const tick=()=>$('#clk').textContent=new Date().toLocaleTimeString('de-DE'); tick(); clock=setInterval(tick,1000);
   };
   anim?boot(go):go();
 }
 function leave(){
+  if(presenceTimer) clearInterval(presenceTimer); presenceTimer=null;
+  db.del('presence',presenceId).catch(()=>{});
   sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel(); pres(false);
-  map.removeLayer(group); group.clearLayers(); data=EMPTY(); edit=false; map.doubleClickZoom.enable();
+  map.removeLayer(group); group.clearLayers(); if(map.hasLayer(gridLayer)) map.removeLayer(gridLayer); gridLayer.clearLayers();
+  data=EMPTY(); edit=false; undoStack=[]; lastSavedSnapshot=null; map.doubleClickZoom.enable();
   $('#alarm').classList.remove('on'); document.body.classList.remove('cmd');
   $('#seal').textContent='LS'; $('#bt').textContent='Los Santos Government'; $('#bs').textContent='Amt für Stadtplanung und Geoinformation';
   map.invalidateSize();
 }
+async function write(fn){
+  busy=1; const before=lastSavedSnapshot?JSON.parse(JSON.stringify(lastSavedSnapshot)):copyState(), after=copyState(), changed=!stateEqual(before,after);
+  if(changed){ undoStack.push(before); if(undoStack.length>50) undoStack.shift(); }
+  try{ await fn(); lastSavedSnapshot=after; setSt(true); }
+  catch(e){ if(changed) undoStack.pop(); setSt(false); }
+  busy=0; const b=$('#undo-btn'); if(b) b.disabled=!edit||!undoStack.length;
+}
+async function undo(){
+  if(!edit||!undoStack.length) return;
+  const target=undoStack[undoStack.length-1];
+  try{
+    await Promise.all(['markers','shapes','meta'].map(k=>db.putAll(k,target[k]||{})));
+    undoStack.pop(); data.markers=target.markers||{}; data.shapes=target.shapes||{}; data.meta=target.meta||{};
+    lastSavedSnapshot=copyState(); redraw(); logit('Letzte Änderung rückgängig gemacht'); playTone('login');
+    const b=$('#undo-btn'); if(b) b.disabled=!edit||!undoStack.length;
+  }catch(e){ setSt(false); alert('Rückgängig konnte nicht gespeichert werden. Bitte Verbindung prüfen.'); }
+}
+async function sync(){
+  if(busy) return;
+  try{
+    const ks=['markers','shapes','meta','log','presence'], r=await Promise.all(ks.map(k=>db.all(k))), n={};
+    ks.forEach((k,i)=>n[k]=r[i]); setSt(true);
+    const changed=JSON.stringify({markers:n.markers,shapes:n.shapes,meta:n.meta})!==JSON.stringify({markers:data.markers,shapes:data.shapes,meta:data.meta});
+    data.presence=n.presence||{};
+    if(changed&&!popOpen){ data.markers=n.markers; data.shapes=n.shapes; data.meta=n.meta; undoStack=[]; redraw(); lastSavedSnapshot=copyState(); const q=$('#search'); if(q&&q.value) q.oninput(); const b=$('#undo-btn'); if(b) b.disabled=true; }
+    if(!popOpen){ data.log=n.log; renderLog(); }
+    renderOnline();
+  }catch(e){ setSt(false); }
+}
+function exportJson(){
+  const payload={version:2,exportedAt:new Date().toISOString(),markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{},log:data.log||{}};
+  const b=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}), a=el('a'), url=URL.createObjectURL(b);
+  a.href=url; a.download='lagebild-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function validBackup(j){
+  const obj=v=>v&&typeof v==='object'&&!Array.isArray(v), keys=o=>Object.keys(o).length<=10000;
+  if(!obj(j)||!obj(j.markers)||!obj(j.shapes)||!obj(j.meta)||!keys(j.markers)||!keys(j.shapes)) return false;
+  for(const m of Object.values(j.markers)){
+    if(!obj(m)||!TYPES[m.t]||!Number.isFinite(+m.x)||!Number.isFinite(+m.y)||m.x<0||m.x>1||m.y<0||m.y>1||!['a','b','z'].includes(m.s||'a')) return false;
+  }
+  for(const s of Object.values(j.shapes)){
+    if(!obj(s)||!KINDS[s.k]||typeof s.n!=='string') return false;
+    if(s.k==='link'){ if(!j.markers[s.a]||!j.markers[s.b]) return false; }
+    else if(!Array.isArray(s.p)||!s.p.length||s.p.some(p=>!Array.isArray(p)||p.length!==2||!Number.isFinite(+p[0])||!Number.isFinite(+p[1])||p[0]<0||p[0]>1||p[1]<0||p[1]>1)) return false;
+    if(['line','arrow'].includes(s.k)&&s.p.length<2||s.k==='zone'&&s.p.length<3) return false;
+  }
+  return true;
+}
+async function importJson(e){
+  const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  if(f.size>5*1024*1024){ alert('Die Sicherungsdatei ist größer als 5 MB.'); return; }
+  try{
+    const j=JSON.parse(await f.text());
+    if(!validBackup(j)){ alert('Die Datei ist kein gültiges Lagebild-Backup oder enthält ungültige Einträge.'); return; }
+    if(!confirm('Alle aktuellen Einträge werden ersetzt. Vorher wird automatisch ein Backup heruntergeladen. Fortfahren?')) return;
+    exportJson();
+    const next={markers:j.markers,shapes:j.shapes,meta:j.meta,log:j.log||{}}, before=copyState();
+    undoStack.push(before); if(undoStack.length>50) undoStack.shift(); const ub=$('#undo-btn'); if(ub) ub.disabled=false;
+    await Promise.all(['markers','shapes','meta','log'].map(k=>db.putAll(k,next[k])));
+    Object.assign(data,next); lastSavedSnapshot=copyState(); redraw(); logit('Backup eingespielt'); setSt(true);
+  }catch(err){ setSt(false); alert('Backup konnte nicht gelesen oder gespeichert werden. Die Datenbankverbindung prüfen.'); }
+}
+function setDef(v){ data.meta.defcon={v}; applyDef(); write(()=>db.put('meta','defcon',{v})); logit('DEFCON '+v+' gesetzt'); playTone('alarm'); }
 const _r=sessionStorage.getItem('ls');
 if(_r){ user=localStorage.getItem('ls_user')||'Unbekannt'; enter(false,_r==='edit'?'edit':'view'); }
 </script>
