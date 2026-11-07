@@ -79,9 +79,13 @@ body.cmd{background:#050505;color:#d6d6d6}
 .cmd #map{background:#050a0d}
 .cmd #mapwrap::after{content:'';position:absolute;inset:0;z-index:600;pointer-events:none;background:linear-gradient(rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7))}
 .cmd footer{background:#0b0b0b;color:#555}
-.mk{width:28px;height:28px;display:grid;place-items:center;background:#0b0b0b;border:2px solid var(--c);color:var(--c);font:600 12px 'Barlow Condensed',sans-serif;box-shadow:0 0 12px var(--c);transform:rotate(45deg)}
+.mk{position:relative;width:28px;height:28px;display:grid;place-items:center;background:#0b0b0b;border:2px solid var(--c);color:var(--c);font:600 12px 'Barlow Condensed',sans-serif;box-shadow:0 0 12px var(--c);transform:rotate(45deg)}
 .mk i{font-style:normal;transform:rotate(-45deg)}
+.mk.has-logo{width:38px;height:38px;border-radius:4px;background:#f3f4f3;box-shadow:0 0 12px #000b;transform:none;overflow:visible}
+.mk.has-logo i{position:absolute;inset:0;display:grid;place-items:center;color:#111;font:600 11px 'Barlow Condensed',sans-serif;transform:none}
+.mk.has-logo img{position:absolute;inset:2px;width:30px;height:30px;object-fit:contain;background:#f3f4f3;border-radius:2px}
 .mk-status{position:absolute;top:-9px;right:-10px;width:15px;height:15px;display:grid;place-items:center;border:1px solid #101314;border-radius:50%;background:var(--state);color:#101314;font:700 10px/1 'IBM Plex Sans',sans-serif;transform:rotate(-45deg);box-shadow:0 0 5px #000}
+.mk.has-logo .mk-status{top:-7px;right:-7px;transform:none}
 .mk.st-a{--state:var(--status-active)}
 .mk.st-b{--state:var(--status-build)}
 .mk.st-z{--state:var(--status-destroyed)}
@@ -286,7 +290,12 @@ const M_PER_UNIT = 0;     // Meter pro Karteneinheit (Karte = 1000 Einheiten bre
 const TYPES = {
   silo:['Raketensilo','R','#ff5a4d'], base:['Army Außenposten','B','#e8e8e8'], aa:['Flugabwehr','F','#f0b24a'],
   radar:['Radarstation','Ra','#8fe3a8'], air:['Airforce Base','L','#9ac7ff'], navy:['Marinestützpunkt','M','#6fa8dc'], hq:['Hauptquartier','HQ','#ffffff'],
-  rsr:['RSS Resolute','RS','#c9a0ff'], bunker:['Bunker','Bu','#d0a26a']
+  rsr:['RSS Resolute','RS','#c9a0ff'], bunker:['Bunker','Bu','#d0a26a'],
+  gov:['Government Gebäude','Gov','#d7dcde','logo2.png'],
+  cavalry:['327th Cavalry Base','327','#d3c09a','logo3.png'],
+  mrpd:['Mission Row Police Department','PD','#79a9dc','logo4.png'],
+  fib:['Federal Investigation Bureau HQ','FIB','#d5d9de','logo5.png'],
+  fire:['Los Santos Fire Department','LSFD','#e16b58','logo6.png']
 };
 const $ = s => document.querySelector(s);
 let activeMap='ls',mapGeneration=0,backupRun='',mapSwitching=false;
@@ -355,7 +364,7 @@ const pt=(x,y)=>[1000*(1-y),1000*x];
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 function el(tag,txt){ const e=document.createElement(tag); if(txt!=null) e.textContent=txt; return e; }
 function btn(txt,fn){ const b=el('button',txt); b.onclick=fn; return b; }
-function icon(o){ const [,c,cl]=TYPES[o.t],status=o.s||'a'; return L.divIcon({className:'',html:`<div class="mk st-${status}" style="--c:${cl}" title="${STATUS[status]}"><i>${c}</i><span class="mk-status">${STATUS_SYMBOL[status]}</span></div>`,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-17]}); }
+function icon(o){ const [,c,cl,image]=TYPES[o.t],status=o.s||'a',logo=image?`<img src="${image}" alt="" onerror="this.remove()">`:'';return L.divIcon({className:'',html:`<div class="mk${image?' has-logo':''} st-${status}" style="--c:${cl}" title="${STATUS[status]}"><i>${c}</i>${logo}<span class="mk-status">${STATUS_SYMBOL[status]}</span></div>`,iconSize:image?[40,40]:[30,30],iconAnchor:image?[20,20]:[15,15],popupAnchor:[0,image?-22:-17]}); }
 function routeDistance(points){let total=0;for(let i=1;i<points.length;i++)total+=map.distance(pt(+points[i-1][0],+points[i-1][1]),pt(+points[i][0],+points[i][1]));return total;}
 function scheduleState(o){
   const now=Date.now(),start=o.start?Date.parse(o.start):NaN,end=o.end?Date.parse(o.end):NaN;
@@ -894,7 +903,10 @@ function loadExportImage(src){
     image.src=src;
   });
 }
-function exportVisibleMap(ctx,size){
+function loadOptionalImage(src){
+  return new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>resolve(null);image.src=src;});
+}
+function exportVisibleMap(ctx,size,logoImages={}){
   const u=size/1000, px=x=>x*size, py=y=>y*size;
   ctx.save();
   ctx.lineCap='round'; ctx.lineJoin='round';
@@ -910,6 +922,17 @@ function exportVisibleMap(ctx,size){
     const mark=34*u;
     ctx.save();ctx.translate(x,y);
     if(status==='z') ctx.globalAlpha=.55;
+    if(TYPES[o.t][3]){
+      const logo=logoImages[TYPES[o.t][3]],logoSize=46*u;
+      ctx.fillStyle='#f3f4f3';ctx.strokeStyle=color;ctx.lineWidth=2*u;
+      ctx.fillRect(-logoSize/2,-logoSize/2,logoSize,logoSize);ctx.strokeRect(-logoSize/2,-logoSize/2,logoSize,logoSize);
+      if(logo)ctx.drawImage(logo,-logoSize*.39,-logoSize*.39,logoSize*.78,logoSize*.78);
+      else{ctx.fillStyle='#111';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`600 ${Math.max(14,12*u)}px "Barlow Condensed",sans-serif`;ctx.fillText(TYPES[o.t][1],0,0);}
+      const badge=13*u;ctx.fillStyle=STATUS_COLOR[status];ctx.strokeStyle='#101314';ctx.lineWidth=Math.max(1,1.5*u);
+      ctx.beginPath();ctx.arc(logoSize*.42,-logoSize*.42,badge,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#101314';ctx.font=`700 ${Math.max(10,9*u)}px "IBM Plex Sans",sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(STATUS_SYMBOL[status],logoSize*.42,-logoSize*.42);
+      ctx.restore();continue;
+    }
     ctx.fillStyle='#0b0b0b';ctx.strokeStyle=color;ctx.lineWidth=2*u;
     if(status==='b') ctx.setLineDash([5*u,3*u]);
     ctx.rotate(Math.PI/4);ctx.fillRect(-mark/2,-mark/2,mark,mark);ctx.strokeRect(-mark/2,-mark/2,mark,mark);
@@ -984,7 +1007,10 @@ async function exportPng(){
       const width=(SB[1][1]-SB[0][1])/1000,height=(SB[1][0]-SB[0][0])/1000;
       ctx.drawImage(image,x0*size,y0*size,width*size,height*size);
     }else ctx.drawImage(image,0,0,size,size);
-    ctx.restore();exportVisibleMap(ctx,size);
+    ctx.restore();
+    const logoSources=[...new Set(Object.values(data.markers||{}).map(o=>TYPES[o.t]&&TYPES[o.t][3]).filter(Boolean))];
+    const logoImages=Object.fromEntries(await Promise.all(logoSources.map(async logo=>[logo,await loadOptionalImage(logo)])));
+    exportVisibleMap(ctx,size,logoImages);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
     if(!blob) throw new Error('PNG-Datei konnte nicht erzeugt werden.');
     const url=URL.createObjectURL(blob),a=el('a');
