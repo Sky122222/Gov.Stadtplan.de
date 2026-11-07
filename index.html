@@ -25,6 +25,9 @@ main{flex:1;display:flex;min-height:0}
 #mapwrap{position:relative;flex:1;min-width:0}
 #map{position:absolute;inset:0;background:#0fa8d6;outline:0}
 #layers{position:absolute;top:12px;left:56px;z-index:900;display:flex;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+#map-picker{display:none;position:absolute;top:12px;left:56px;z-index:901;gap:4px;padding:4px;background:#101314;border:1px solid #454b4d}
+#map-picker button{border:1px solid #3c4447;background:#171b1d;color:#b9c0c2;padding:7px 10px;font:500 13px 'Barlow Condensed',sans-serif;letter-spacing:.08em;cursor:pointer}
+#map-picker button.on{background:#d7dcde;color:#111;border-color:#fff}
 #layers button{border:0;background:none;padding:8px 14px;font:inherit;font-size:13.5px;cursor:pointer;color:var(--mut)}
 #layers button.on{background:#111;color:#fff}
 #xy{display:none;position:absolute;left:12px;bottom:12px;z-index:900;font:500 14px 'Barlow Condensed',sans-serif;letter-spacing:.08em;color:var(--acc);background:rgba(0,0,0,.7);padding:3px 10px}
@@ -52,6 +55,8 @@ body.cmd{background:#050505;color:#d6d6d6}
 .cmd .brand small{color:#777}
 .cmd nav{display:none}
 .cmd #clk,.cmd aside,.cmd #xy{display:block}
+.cmd #map-picker{display:flex}
+.cmd #layers{top:58px}
 .cmd #layers{border-color:#333;background:#0b0b0b}
 .cmd #layers button{color:#999}
 .cmd #layers button.on{background:#222;color:var(--acc)}
@@ -135,7 +140,44 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 .cmd #mapwrap::after{background:linear-gradient(rgba(119,205,190,.075) 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,rgba(119,205,190,.075) 1px,transparent 1px) 0 0/56px 56px,radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.78))}
 .cmd aside{background:linear-gradient(180deg,#111719,#090b0c);border-color:#344044}
 .cmd header{background:linear-gradient(90deg,#121719,#090b0c);border-color:#344044}
+#boot.boot-screen{display:none;align-items:center;justify-items:center;overflow:hidden;padding:0;color:#e4e6e7;letter-spacing:.08em;background:radial-gradient(ellipse at 50% 46%,#45494b 0,#202426 38%,#080a0b 82%);opacity:1;transition:opacity .7s ease}
+#boot.boot-screen.active{display:grid}
+#boot.boot-screen.leaving{opacity:0}
+#boot.boot-screen:before,#boot.boot-screen:after{content:'';position:absolute;inset:0;pointer-events:none}
+#boot.boot-screen:before{background:linear-gradient(rgba(220,226,228,.055) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(220,226,228,.055) 1px,transparent 1px) 0 0/44px 44px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 85%)}
+#boot.boot-screen:after{height:30%;top:-35%;background:linear-gradient(transparent,rgba(205,220,224,.13),transparent);animation:bootSweep 4.5s linear infinite}
+.boot-hud{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding:clamp(18px,4vw,48px);z-index:1}
+.boot-top,.boot-bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;text-transform:uppercase;font:500 12px 'Barlow Condensed',sans-serif;letter-spacing:.2em;color:#aab1b4}
+.boot-top{padding-right:clamp(78px,11vw,130px)}
+.boot-top strong{color:#e8ebec;font-size:15px}
+.boot-brand{position:absolute;right:clamp(18px,4vw,48px);top:clamp(18px,4vw,48px);width:clamp(68px,8vw,104px);height:clamp(68px,8vw,104px);display:grid;place-items:center;border:1px solid #d5dadb80;background:#101314aa;box-shadow:0 0 34px #fff2,inset 0 0 20px #fff1;animation:bootLogo 1.2s ease-out both}
+.boot-brand img{display:block;width:72%;height:72%;object-fit:contain;filter:drop-shadow(0 0 10px #fff7)}
+.boot-main{align-self:center;justify-self:center;width:min(760px,100%);display:grid;grid-template-columns:minmax(150px,260px) 1fr;align-items:center;gap:clamp(24px,6vw,76px)}
+.boot-map{aspect-ratio:1;border:1px solid #b8c0c277;position:relative;background:linear-gradient(#14181999,#14181999),url('karte.jpg') center/contain no-repeat;filter:grayscale(1) contrast(1.05);box-shadow:0 0 55px #0009,inset 0 0 45px #000b;animation:mapReveal 2s ease-out both}
+.boot-map:before,.boot-map:after{content:'';position:absolute;inset:12%;border:1px solid #dbe1e233;border-radius:50%}
+.boot-map:after{inset:28%}
+.boot-cross{position:absolute;left:50%;top:50%;width:18px;height:18px;border:1px solid #f1f3f3;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 18px #fff}
+.boot-cross:after{content:'';position:absolute;left:50%;top:50%;width:5px;height:5px;background:#fff;transform:translate(-50%,-50%)}
+.boot-copy{min-width:0}
+.boot-copy .boot-kicker{font:500 12px 'Barlow Condensed',sans-serif;letter-spacing:.24em;color:#aab2b5}
+.boot-copy h2{margin:8px 0 22px;font:600 clamp(28px,5vw,46px)/.98 'Barlow Condensed',sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#f0f2f2}
+.boot-phase{min-height:26px;font:500 16px 'Barlow Condensed',sans-serif;letter-spacing:.12em;color:#d7dcde}
+.boot-lines{display:grid;gap:8px;margin-top:18px}
+.boot-line{display:flex;justify-content:space-between;gap:15px;border-bottom:1px solid #aeb8bb33;padding:5px 0;font:500 12px 'Barlow Condensed',sans-serif;letter-spacing:.13em;color:#939da0;opacity:.28;transition:opacity .35s,color .35s}
+.boot-line.done{opacity:1;color:#e1e5e6}
+.boot-line b{color:#c9d0d2;font-weight:500}
+.boot-progress{height:2px;background:#cfd5d633;margin-top:22px;overflow:hidden}
+.boot-progress i{display:block;width:100%;height:100%;background:#e2e7e8;transform:scaleX(0);transform-origin:left;animation:bootProgress 14.3s linear forwards;box-shadow:0 0 12px #fff}
+.boot-bottom span:last-child{color:#e1e5e6}
+@keyframes bootSweep{to{transform:translateY(460%)}}
+@keyframes bootLogo{from{opacity:0;transform:translateY(-12px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes mapReveal{from{opacity:0;transform:scale(.88);filter:grayscale(1) brightness(.35)}to{opacity:1;transform:scale(1);filter:grayscale(1) contrast(1.05)}}
+@keyframes bootProgress{to{transform:scaleX(1)}}
+@media(max-width:640px){.boot-main{grid-template-columns:110px 1fr;gap:18px}.boot-copy h2{font-size:27px}.boot-map{width:110px}.boot-top,.boot-bottom{font-size:10px}.boot-hud{padding:18px}.boot-brand{right:18px;top:54px;width:54px;height:54px}}
+@media(prefers-reduced-motion:reduce){#boot.boot-screen:after,.boot-brand,.boot-map{animation:none}.boot-progress i{animation-duration:1s}}
 #side .extra-row{display:flex;gap:6px;margin:7px 0}
+#side .backup-row{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}
+#side .backup-row select,#side .backup-row button{width:100%;padding:7px;background:#111516;border:1px solid #363e41;color:#ddd;font:inherit;font-size:12px}
 #search{width:100%;padding:8px;background:#111516;border:1px solid #363e41;color:#eee;font:inherit}
 #online{font-size:12px;color:#aeb5ba;line-height:1.55}
 #online .person{display:flex;align-items:center;gap:7px}
@@ -157,6 +199,7 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 <main>
   <div id="mapwrap">
     <div id="map" tabindex="-1"></div>
+    <div id="map-picker"><button data-map="ls" class="on">LOS SANTOS</button><button data-map="cp">CAYO PERICO</button></div>
     <div id="layers"><button data-l="karte" class="on">Stadtplan</button><button data-l="sat">Luftbild</button></div>
     <div id="xy"></div>
   </div>
@@ -189,20 +232,26 @@ const TYPES = {
   rsr:['RSS Resolute','RS','#c9a0ff'], bunker:['Bunker','Bu','#d0a26a']
 };
 const $ = s => document.querySelector(s);
+let activeMap='ls',mapGeneration=0,backupRun='',mapSwitching=false;
 const map = L.map('map',{crs:L.CRS.Simple,minZoom:-1.5,maxZoom:3,zoomSnap:.25,attributionControl:false,maxBounds:[[-150,-150],[1150,1150]],maxBoundsViscosity:.8});
 const KB = [[0,0],[1000,1000]];
 const sx=(K.x1-K.x0)/(S.x1-S.x0), sy=(K.y1-K.y0)/(S.y1-S.y0);
 const bx0=K.x0-S.x0*sx, by0=K.y0-S.y0*sy;
 const SB = [[1000*(1-(by0+sy)),1000*bx0],[1000*(1-by0),1000*(bx0+sx)]];
-const imgs = {karte:L.imageOverlay('karte.jpg',KB), sat:L.imageOverlay('satellit.jpg',SB)};
-let cur=null;
+const imgs = {karte:L.imageOverlay('karte.jpg',KB), sat:L.imageOverlay('satellit.jpg',SB), cp:L.imageOverlay('cp.png',KB)};
+let cur=null, shownImage=null;
 function setLayer(n){
-  if(cur) map.removeLayer(imgs[cur]);
-  cur=n; imgs[n].addTo(map);
-  $('#map').style.background = n==='sat' ? '#0a1030' : '#0fa8d6';
+  cur=n;
+  if(shownImage&&map.hasLayer(shownImage)) map.removeLayer(shownImage);
+  shownImage=imgs[activeMap==='cp'?'cp':n]; shownImage.addTo(map);
+  const commandMode=document.body.classList.contains('cmd');
+  $('#map').style.background=commandMode?'#45494b':(activeMap==='cp'?'#4caec8':n==='sat'?'#0a1030':'#0fa8d6');
+  $('#layers').style.display=activeMap==='ls'&&LUFTBILD?'flex':'none';
   document.querySelectorAll('#layers button').forEach(b=>b.classList.toggle('on',b.dataset.l===n));
+  document.querySelectorAll('#map-picker button').forEach(b=>b.classList.toggle('on',b.dataset.map===activeMap));
 }
 document.querySelectorAll('#layers button').forEach(b=>b.onclick=()=>setLayer(b.dataset.l));
+document.querySelectorAll('#map-picker button').forEach(b=>b.onclick=()=>switchMap(b.dataset.map));
 map.fitBounds(KB); setLayer('karte'); $('#layers').style.display=LUFTBILD?'flex':'none';
 
 /* ---- Zugang ---- */
@@ -224,14 +273,15 @@ $('#pexit').onclick=()=>pres(false);
 
 /* ---- Datenhaltung ---- */
 const DB = DB_URL.replace(/\/$/,'');
+function dbPath(k,id){const base=activeMap==='cp'?'maps/cayo-perico/':'';return `${DB}/${base}${k}${id?'/'+encodeURIComponent(id):''}.json`;}
 const db = {
-  async all(k){ if(!DB) return JSON.parse(localStorage.getItem('ls_'+k)||'{}'); const r=await fetch(`${DB}/${k}.json`); if(!r.ok) throw 0; return (await r.json())||{}; },
-  async put(k,id,o){ if(!DB){ const a=await this.all(k); a[id]=o; localStorage.setItem('ls_'+k,JSON.stringify(a)); return; } const r=await fetch(`${DB}/${k}/${id}.json`,{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; },
-  async del(k,id){ if(!DB){ const a=await this.all(k); delete a[id]; localStorage.setItem('ls_'+k,JSON.stringify(a)); return; } const r=await fetch(`${DB}/${k}/${id}.json`,{method:'DELETE'}); if(!r.ok) throw 0; },
-  async putAll(k,o){ if(!DB){ localStorage.setItem('ls_'+k,JSON.stringify(o)); return; } const r=await fetch(`${DB}/${k}.json`,{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; }
+  async all(k){ if(!DB) return JSON.parse(localStorage.getItem(`ls_${activeMap}_${k}`)||'{}'); const r=await fetch(dbPath(k)); if(!r.ok) throw 0; return (await r.json())||{}; },
+  async put(k,id,o){ if(!DB){ const a=await this.all(k); a[id]=o; localStorage.setItem(`ls_${activeMap}_${k}`,JSON.stringify(a)); return; } const r=await fetch(dbPath(k,id),{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; },
+  async del(k,id){ if(!DB){ const a=await this.all(k); delete a[id]; localStorage.setItem(`ls_${activeMap}_${k}`,JSON.stringify(a)); return; } const r=await fetch(dbPath(k,id),{method:'DELETE'}); if(!r.ok) throw 0; },
+  async putAll(k,o){ if(!DB){ localStorage.setItem(`ls_${activeMap}_${k}`,JSON.stringify(o)); return; } const r=await fetch(dbPath(k),{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; }
 };
 const STATUS={a:'Aktiv',b:'Im Bau',z:'Zerstört'}, RAD=['silo','radar','aa'], COLORS=['#8fe3a8','#ff5a4d','#6fa8dc','#f0b24a','#ffffff'];
-const KINDS={line:'Linie',zone:'Zone',arrow:'Pfeil',text:'Text',link:'Verbindung'}, DRAW=['line','zone','arrow'];
+const KINDS={line:'Linie',zone:'Zone',arrow:'Pfeil',route:'Route',text:'Text',link:'Verbindung'}, DRAW=['line','zone','arrow','route'];
 const DC={5:'#6fa8dc',4:'#8fe3a8',3:'#f0d34a',2:'#ff5a4d',1:'#ffffff'};
 const EMPTY=()=>({markers:{},shapes:{},meta:{},log:{}});
 let data=EMPTY(), mk={}, sh={}, tool=null, col=COLORS[0], pts=[], mpts=[], tmp=null, mline=null, mlab=null, btns={}, hidden=new Set(), busy=0, popOpen=0, timer=null, clock=null, edit=false, user='Unbekannt', linkA=null, lastEsc=0;
@@ -242,6 +292,17 @@ const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 function el(tag,txt){ const e=document.createElement(tag); if(txt!=null) e.textContent=txt; return e; }
 function btn(txt,fn){ const b=el('button',txt); b.onclick=fn; return b; }
 function icon(o){ const [,c,cl]=TYPES[o.t]; return L.divIcon({className:'',html:`<div class="mk st-${o.s||'a'}" style="--c:${cl}"><i>${c}</i></div>`,iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-16]}); }
+function routeDistance(points){let total=0;for(let i=1;i<points.length;i++)total+=map.distance(pt(+points[i-1][0],+points[i-1][1]),pt(+points[i][0],+points[i][1]));return total;}
+function scheduleState(o){
+  const now=Date.now(),start=o.start?Date.parse(o.start):NaN,end=o.end?Date.parse(o.end):NaN;
+  if(Number.isFinite(end)&&now>=end)return 'Abgelaufen';
+  if(Number.isFinite(start)&&now<start)return 'Geplant';
+  if(Number.isFinite(start)||Number.isFinite(end))return 'Zeitfenster aktiv';
+  return '';
+}
+function formatScheduleTime(v){const d=v?new Date(v):null;return d&&!Number.isNaN(d.getTime())?d.toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'}):'';}
+function asLocalDateTime(v){if(!v)return '';const d=new Date(v);if(Number.isNaN(d.getTime()))return '';d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);}
+function toIsoDateTime(v){if(!v)return '';const d=new Date(v);return Number.isNaN(d.getTime())?'':d.toISOString();}
 function logit(a){ if(!edit) return; const id=newId(), o={t:Date.now(),u:user,a}; data.log[id]=o; db.put('log',id,o).catch(()=>{}); }
 async function write(fn){ busy=1; try{ await fn(); setSt(true); }catch(e){ setSt(false); } busy=0; }
 async function save(k,id,o,m){ await write(()=>db.put(k,id,o)); logit(m); map.closePopup(); redraw(); }
@@ -249,27 +310,37 @@ async function remove(k,id,m){ delete data[k][id]; await write(()=>db.del(k,id))
 function viewPop(t,o,x){ const d=el('div'); d.className='pp'; d.append(el('b',t),el('div',o.n)); if(x) d.append(el('small',x)); if(o.note) d.append(el('div',o.note)); return d; }
 function popMk(id){
   const o=data.markers[id], T=TYPES[o.t];
-  if(!edit) return viewPop(T[0],o,STATUS[o.s||'a']+(o.r>0&&RAD.includes(o.t)?' · Radius '+fmt(o.r):''));
+  const schedule=scheduleState(o),extra=[o.code&&'Kennung '+o.code,o.priority&&'Priorität '+o.priority,o.unit&&'Einheit '+o.unit,
+    (o.start||o.end)?`${schedule||'Zeitplan'}${o.start?' · ab '+formatScheduleTime(o.start):''}${o.end?' · bis '+formatScheduleTime(o.end):''}`:null].filter(Boolean).join(' · ');
+  if(!edit){const d=viewPop(T[0],o,STATUS[o.s||'a']+(o.r>0&&RAD.includes(o.t)?' · Radius '+fmt(o.r):''));if(extra)d.append(el('small',extra));return d;}
   const d=el('div'); d.className='pp';
   const i=el('input'); i.value=o.n; i.maxLength=60;
   const st=el('select'); for(const [k,v] of Object.entries(STATUS)){ const p=el('option',v); p.value=k; st.append(p); } st.value=o.s||'a';
+  const code=el('input');code.value=o.code||'';code.maxLength=30;code.placeholder='Kennung';
+  const priority=el('select');[['normal','Normal'],['niedrig','Niedrig'],['hoch','Hoch'],['kritisch','Kritisch']].forEach(([v,label])=>{const p=el('option',label);p.value=v;priority.append(p);});priority.value=o.priority||'normal';
+  const unit=el('input');unit.value=o.unit||'';unit.maxLength=50;unit.placeholder='Zuständige Einheit';
+  const start=el('input');start.type='datetime-local';start.value=asLocalDateTime(o.start);
+  const end=el('input');end.type='datetime-local';end.value=asLocalDateTime(o.end);
   const nt=el('textarea'); nt.value=o.note||''; nt.placeholder='Notiz'; nt.maxLength=500;
-  d.append(el('b',T[0]),i,st);
+  d.append(el('b',T[0]),i,st,code,priority,unit,el('small','Geplanter Zeitraum'),start,end);
   let rg=null;
   if(RAD.includes(o.t)){ rg=el('input'); rg.type='range'; rg.min=0; rg.max=300; rg.value=o.r||0; const lb=el('small');
     const up=()=>lb.textContent='Radius: '+(+rg.value>0?fmt(+rg.value):'aus'); rg.oninput=up; up(); d.append(lb,rg); }
   d.append(nt,
-    btn('Speichern',()=>{ o.n=i.value.trim()||T[0]; o.s=st.value; o.note=nt.value.trim(); if(rg) o.r=+rg.value; save('markers',id,o,`${T[0]} „${o.n}“ geändert`); }),
+    btn('Speichern',()=>{ if(start.value&&end.value&&new Date(end.value)<=new Date(start.value)){alert('Die Endzeit muss nach der Startzeit liegen.');return;}o.n=i.value.trim()||T[0]; o.s=st.value; o.note=nt.value.trim();o.code=code.value.trim();o.priority=priority.value;o.unit=unit.value.trim();o.start=toIsoDateTime(start.value);o.end=toIsoDateTime(end.value); if(rg) o.r=+rg.value; save('markers',id,o,`${T[0]} „${o.n}“ geändert`); }),
     btn('Löschen',()=>{ for(const [k,s] of Object.entries(data.shapes)) if(s.a===id||s.b===id){ delete data.shapes[k]; db.del('shapes',k); } remove('markers',id,`${T[0]} „${o.n}“ gelöscht`); }));
   return d;
 }
 function popSh(id){
   const o=data.shapes[id];
-  if(!edit) return viewPop(KINDS[o.k],o);
+  const extra=o.k==='route'?`Distanz ${fmt(routeDistance(o.p||[]))}`:null;
+  if(!edit) return viewPop(KINDS[o.k],o,extra);
   const d=el('div'); d.className='pp';
   const i=el('input'); i.value=o.n; i.maxLength=60;
   const nt=el('textarea'); nt.value=o.note||''; nt.placeholder='Notiz'; nt.maxLength=500;
-  d.append(el('b',KINDS[o.k]),i,nt,
+  d.append(el('b',KINDS[o.k]),i);
+  if(o.k==='route')d.append(el('small','Distanz: '+fmt(routeDistance(o.p||[]))));
+  d.append(nt,
     btn('Speichern',()=>{ o.n=i.value.trim()||o.n; o.note=nt.value.trim(); save('shapes',id,o,`${KINDS[o.k]} „${o.n}“ geändert`); }),
     btn('Löschen',()=>remove('shapes',id,`${KINDS[o.k]} „${o.n}“ gelöscht`)));
   return d;
@@ -295,12 +366,12 @@ function redraw(){
       g=L.polyline([pt(a.x,a.y),pt(b.x,b.y)],{color:o.c,weight:2,dashArray:'2 6'});
     } else {
       const p=o.p.map(q=>pt(q[0],q[1]));
-      g=o.k==='zone'?L.polygon(p,{color:o.c,weight:2,fillOpacity:.18}):L.polyline(p,{color:o.c,weight:3,dashArray:o.k==='line'?'8 6':null});
-      if(o.k==='arrow'&&p.length>1){ const a=p[p.length-2], b=p[p.length-1], deg=-Math.atan2(b[0]-a[0],b[1]-a[1])*180/Math.PI;
+      g=o.k==='zone'?L.polygon(p,{color:o.c,weight:2,fillOpacity:.18}):L.polyline(p,{color:o.c,weight:o.k==='route'?4:3,dashArray:o.k==='line'?'8 6':o.k==='route'?'12 5':null});
+      if(['arrow','route'].includes(o.k)&&p.length>1){ const a=p[p.length-2], b=p[p.length-1], deg=-Math.atan2(b[0]-a[0],b[1]-a[1])*180/Math.PI;
         L.marker(b,{interactive:false,icon:L.divIcon({className:'',html:`<div class="ah" style="color:${o.c};transform:rotate(${deg}deg)">▶</div>`,iconSize:[20,20],iconAnchor:[10,10]})}).addTo(group); }
     }
     sh[id]=g.bindPopup(()=>popSh(id)).addTo(group);
-    if(edit&&['line','zone','arrow'].includes(o.k)) o.p.forEach((q,i)=>{
+    if(edit&&['line','zone','arrow','route'].includes(o.k)) o.p.forEach((q,i)=>{
       const h=L.marker(pt(q[0],q[1]),{draggable:true,icon:L.divIcon({className:'',html:'<div class="vertex-handle"></div>',iconSize:[12,12],iconAnchor:[6,6]}),zIndexOffset:1000}).addTo(group);
       h.on('click',L.DomEvent.stopPropagation);
       h.on('dragend',async()=>{ const p=h.getLatLng(); o.p[i]=[p.lng/1000,1-p.lat/1000]; await write(()=>db.put('shapes',id,o)); logit(`${KINDS[o.k]} „${o.n}“: Punkt verschoben`); redraw(); });
@@ -311,7 +382,7 @@ function redraw(){
 function mkLink(a,b){ const id=newId(), o={k:'link',c:col,n:'Verbindung',a,b}; data.shapes[id]=o; redraw(); write(()=>db.put('shapes',id,o)); logit('Verbindung gesetzt'); }
 function renderList(){
   const l=$('#list'); if(!l) return; l.replaceChildren(); const rows=[];
-  for(const id in mk){ const o=data.markers[id]; rows.push([o.t,o.n,TYPES[o.t][1]+(o.s&&o.s!=='a'?' · '+STATUS[o.s]:''),TYPES[o.t][2],()=>{ map.flyTo(mk[id].getLatLng(),1.5); mk[id].openPopup(); }]); }
+  for(const id in mk){ const o=data.markers[id],timing=scheduleState(o); rows.push([o.t,o.n,TYPES[o.t][1]+(o.s&&o.s!=='a'?' · '+STATUS[o.s]:'')+(timing?' · '+timing:''),TYPES[o.t][2],()=>{ map.flyTo(mk[id].getLatLng(),1.5); mk[id].openPopup(); }]); }
   for(const id in sh){ const o=data.shapes[id], g=sh[id]; rows.push([o.k,o.n,KINDS[o.k],o.c,()=>{ g.getBounds?map.flyToBounds(g.getBounds(),{maxZoom:1.5}):map.flyTo(g.getLatLng(),1.5); g.openPopup(); }]); }
   rows.sort((a,b)=>a[0].localeCompare(b[0]));
   if(!rows.length){ const e=el('div','Keine Einträge.'); e.style.cssText='font-size:13px;color:#777'; l.append(e); }
@@ -343,7 +414,7 @@ function setTool(k){ if(!edit&&k&&k!=='measure') return; tool=k===tool?null:k; r
 function preview(){
   if(tmp) map.removeLayer(tmp); if(!pts.length){ tmp=null; return; }
   const p=pts.map(q=>pt(q[0],q[1])), o={color:col,weight:2,dashArray:'4 4'};
-  tmp=(tool==='zone'&&p.length>2?L.polygon(p,o):L.polyline(p,o)).addTo(map);
+  tmp=(tool==='zone'&&p.length>2?L.polygon(p,o):L.polyline(p,{...o,weight:tool==='route'?4:o.weight,dashArray:tool==='route'?'8 5':o.dashArray})).addTo(map);
 }
 function mpreview(){
   if(mline) map.removeLayer(mline); if(mlab) map.removeLayer(mlab);
@@ -394,9 +465,9 @@ function buildSide(){
   const s=$('#side'); s.replaceChildren(); btns={};
   const mkBtn=(k,label,c)=>{ const b=el('button',label); if(c) b.style.borderLeft='3px solid '+c; b.onclick=()=>setTool(k); btns[k]=b; return b; };
   const grid=(...n)=>{ const d=el('div'); d.className='tools'; d.append(...n); return d; };
-  const hint=el('div',(edit?'Linie/Zone/Pfeil: Punkte klicken, Doppelklick oder Enter beendet. Verbindung: zwei Einträge nacheinander anklicken. ':'')+'Messen: Rechtsklick setzt zurück. Esc wählt ab, zweimal Esc führt zur Tarnseite.'); hint.style.cssText='font-size:12px;color:#777;margin-top:8px';
+  const hint=el('div',(edit?'Linie/Zone/Pfeil/Route: Punkte klicken, Doppelklick oder Enter beendet. Verbindung: zwei Einträge nacheinander anklicken. ':'')+'Messen: Rechtsklick setzt zurück. Esc wählt ab, zweimal Esc führt zur Tarnseite.'); hint.style.cssText='font-size:12px;color:#777;margin-top:8px';
   if(edit){
-    s.append(el('h3','Platzieren'),grid(...Object.entries(TYPES).map(([k,v])=>mkBtn(k,v[0],v[2]))),el('h3','Zeichnen'),grid(mkBtn('line','Linie'),mkBtn('zone','Zone'),mkBtn('arrow','Pfeil'),mkBtn('text','Text'),mkBtn('link','Verbindung'),mkBtn('measure','Messen')));
+    s.append(el('h3','Platzieren'),grid(...Object.entries(TYPES).map(([k,v])=>mkBtn(k,v[0],v[2]))),el('h3','Zeichnen'),grid(mkBtn('line','Linie'),mkBtn('zone','Zone'),mkBtn('arrow','Pfeil'),mkBtn('route','Route'),mkBtn('text','Text'),mkBtn('link','Verbindung'),mkBtn('measure','Messen')));
     const sw=el('div'); sw.className='sw';
     COLORS.forEach(c=>{ const b=el('button'); b.style.background=c; if(c===col) b.className='on';
       b.onclick=()=>{ col=c; sw.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); if(tmp) preview(); }; sw.append(b); });
@@ -404,16 +475,22 @@ function buildSide(){
     s.append(sw,hint,el('h3','Alarmstufe'),grid(...dv));
   } else s.append(el('h3','Werkzeug'),grid(mkBtn('measure','Messen')),hint);
   const fl=el('div'); fl.className='chips';
-  [...Object.entries(TYPES).map(([k,v])=>[k,v[0]]),...['line','zone','arrow','text','link'].map(k=>[k,KINDS[k]])].forEach(([k,n])=>{
+  [...Object.entries(TYPES).map(([k,v])=>[k,v[0]]),...['line','zone','arrow','route','text','link'].map(k=>[k,KINDS[k]])].forEach(([k,n])=>{
     const c=el('button',n); c.className='chip'+(hidden.has(k)?' off':'');
     c.onclick=()=>{ hidden.has(k)?hidden.delete(k):hidden.add(k); c.classList.toggle('off'); redraw(); }; fl.append(c); });
   const h3=el('h3','Einträge ('); const c=el('span'); c.id='cnt'; c.style.color='#fff'; h3.append(c,')');
   const l=el('div'); l.id='list';
   const lg=el('details'); lg.append(el('summary','Protokoll')); const ld=el('div'); ld.id='log'; lg.append(ld);
   const fi=el('input'); fi.type='file'; fi.accept='.json'; fi.hidden=true; fi.onchange=importJson;
+  const backupSelect=el('select');backupSelect.id='backup-select';backupSelect.append(el('option','Lade Sicherungen…'));
+  const restore=btn('Sicherung wiederherstellen',restoreBackup);restore.id='backup-restore';restore.disabled=true;
+  const backups=el('div');backups.className='backup-row';backups.append(backupSelect,restore);
   const out=el('button','Abmelden'); out.id='out'; out.onclick=leave;
   const st=el('div'); st.id='stat';
-  s.append(el('h3','Filter'),fl,h3,l,lg,el('h3','Daten'),grid(btn('Export',exportJson),...(edit?[btn('Import',()=>fi.click())]:[]),btn('Präsentation',()=>pres(true))),fi,el('h3','Status'),st,out);
+  const png=btn('PNG exportieren',exportPng);png.id='png-export';
+  s.append(el('h3','Filter'),fl,h3,l,lg,el('h3','Daten'),grid(btn('Export JSON',exportJson),png,...(edit?[btn('Import',()=>fi.click())]:[]),btn('Präsentation',()=>pres(true))),fi);
+  if(edit)s.append(el('h3','Automatische Sicherungen'),backups);
+  s.append(el('h3','Status'),st,out);
 }
 function boot(done){
   const b=$('#boot'); b.style.display='block'; b.style.opacity=1; b.textContent='';
@@ -454,13 +531,23 @@ function tryCode(){
   $('#full-name').value=localStorage.getItem('ls_user')||''; $('#namegate').style.display='grid'; setTimeout(()=>$('#full-name').focus(),0);
 }
 function boot(done){
-  const b=$('#boot'), logo=el('div'); logo.className='boot-logo';
-  logo.innerHTML=$('#logo1').outerHTML; document.body.append(logo); b.style.display='block'; b.style.opacity=1; b.textContent='';
-  const lines=['LS GOVERNMENT · SECURE ACCESS NODE','AUTHENTICATION .............. VERIFIED','COMMAND NETWORK .............. ONLINE','SYNCHRONIZING TACTICAL DISPLAY'];
-  let i=0; const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches, t=setInterval(()=>{
-    if(i<lines.length){ b.textContent+=lines[i++]+'\n'; }
-    else{ clearInterval(t); b.style.opacity=0; setTimeout(()=>{ b.style.display='none'; logo.remove(); done(); },reduced?0:500); }
-  },reduced?20:520);
+  const b=$('#boot'), reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  b.className='boot-screen active';
+  b.innerHTML='<div class="boot-hud"><div class="boot-top"><span><strong>LOS SANTOS</strong> / SECURE NETWORK</span><span>ACCESS PROTOCOL · <b id="boot-time">15.0</b></span></div><div class="boot-brand"><img src="logo1.png" alt="Logo 1"></div><div class="boot-main"><div class="boot-map" aria-hidden="true"><i class="boot-cross"></i></div><div class="boot-copy"><div class="boot-kicker">DEPARTMENT OF DEFENSE · ACCESS SEQUENCE</div><h2>Establishing<br>secure link</h2><div class="boot-phase" id="boot-phase">Authentifizierung wird vorbereitet</div><div class="boot-lines"><div class="boot-line"><span>IDENTITÄTSPRÜFUNG</span><b>---</b></div><div class="boot-line"><span>VERSCHLÜSSELTER KANAL</span><b>---</b></div><div class="boot-line"><span>LAGEBILD-SYNCHRONISATION</span><b>---</b></div><div class="boot-line"><span>KOMMANDOOBERFLÄCHE</span><b>---</b></div></div><div class="boot-progress"><i></i></div></div></div><div class="boot-bottom"><span>LOS SANTOS GOVERNMENT · OPERATIONS SYSTEM</span><span id="boot-role"></span></div></div>';
+  const role=pendingRole==='edit'?'BEARBEITERZUGANG':'ZUSCHAUERZUGANG';
+  b.querySelector('#boot-role').textContent=role;
+  const phases=['Authentifizierung wird vorbereitet','Zugang wird verschlüsselt verifiziert','Gemeinsames Lagebild wird synchronisiert','Kommandooberfläche wird initialisiert'];
+  const nodes=[...b.querySelectorAll('.boot-line')], total=reduced?900:15000, start=Date.now();
+  const update=()=>{
+    const elapsed=Date.now()-start, phase=Math.min(phases.length-1,Math.floor(elapsed/(total/phases.length)));
+    b.querySelector('#boot-phase').textContent=phases[phase];
+    nodes.forEach((node,i)=>{node.classList.toggle('done',i<=phase);node.querySelector('b').textContent=i<=phase?'VERIFIED':'---';});
+    b.querySelector('#boot-time').textContent=Math.max(0,((total-elapsed)/1000).toFixed(1));
+  };
+  update();
+  const ticker=setInterval(update,100);
+  setTimeout(()=>b.classList.add('leaving'),total-700);
+  setTimeout(()=>{clearInterval(ticker);b.classList.remove('active','leaving');b.replaceChildren();done();},total);
 }
 function addGrid(){
   gridLayer.clearLayers();
@@ -500,22 +587,34 @@ async function heartbeatPresence(){
 }
 function enter(anim,role){
   const go=()=>{
-    edit=role==='edit'; sessionStorage.setItem('ls',role); showView('map'); data=EMPTY(); data.presence={};
-    document.body.classList.add('cmd'); map.doubleClickZoom.disable();
-    $('#seal').textContent=edit?'OPS':'DOD'; $('#bt').textContent='Joint Defense Command'; $('#bs').textContent='Strategische Lageübersicht';
+    activeMap='ls';edit=role==='edit'; sessionStorage.setItem('ls',role); showView('map'); data=EMPTY(); data.presence={};
+    document.body.classList.add('cmd'); setLayer(cur||'karte'); map.doubleClickZoom.disable();
+    $('#seal').textContent=edit?'OPS':'DOD'; $('#bt').textContent='Department of Defense'; $('#bs').textContent='Strategische Lageübersicht';
     buildSide(); addExtras(); applyDef(); group.addTo(map); addGrid(); map.invalidateSize(); map.fitBounds(KB);
     lastSavedSnapshot=copyState(); sync(); heartbeatPresence(); timer=setInterval(sync,5000); presenceTimer=setInterval(heartbeatPresence,8000);
     const tick=()=>$('#clk').textContent=new Date().toLocaleTimeString('de-DE'); tick(); clock=setInterval(tick,1000);
   };
   anim?boot(go):go();
 }
+async function switchMap(name){
+  if(!['ls','cp'].includes(name)||name===activeMap||mapSwitching)return;
+  mapSwitching=true;document.querySelectorAll('#map-picker button').forEach(b=>b.disabled=true);
+  try{
+    await db.del('presence',presenceId).catch(e=>console.warn('Vorherige Kartenpräsenz konnte nicht entfernt werden.',e));
+    map.closePopup();popOpen=0;activeMap=name;mapGeneration++;backupRun='';tool=null;resetTemp();sel();undoStack=[];data=EMPTY();data.presence={};
+    group.clearLayers();mk={};sh={};renderList();renderLog();applyDef();
+    setLayer(cur||'karte');map.fitBounds(KB);lastSavedSnapshot=copyState();
+    const b=$('#undo-btn');if(b)b.disabled=true;
+    await sync();await heartbeatPresence();
+  }finally{mapSwitching=false;document.querySelectorAll('#map-picker button').forEach(b=>b.disabled=false);}
+}
 function leave(){
   if(presenceTimer) clearInterval(presenceTimer); presenceTimer=null;
   db.del('presence',presenceId).catch(()=>{});
   sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel(); pres(false);
   map.removeLayer(group); group.clearLayers(); if(map.hasLayer(gridLayer)) map.removeLayer(gridLayer); gridLayer.clearLayers();
-  data=EMPTY(); edit=false; undoStack=[]; lastSavedSnapshot=null; map.doubleClickZoom.enable();
-  $('#alarm').classList.remove('on'); document.body.classList.remove('cmd');
+  data=EMPTY(); edit=false; undoStack=[]; lastSavedSnapshot=null; activeMap='ls'; map.doubleClickZoom.enable();
+  $('#alarm').classList.remove('on'); document.body.classList.remove('cmd'); setLayer(cur||'karte');
   $('#seal').textContent='LS'; $('#bt').textContent='Los Santos Government'; $('#bs').textContent='Amt für Stadtplanung und Geoinformation';
   map.invalidateSize();
 }
@@ -538,15 +637,166 @@ async function undo(){
 }
 async function sync(){
   if(busy) return;
+  const generation=mapGeneration;
   try{
     const ks=['markers','shapes','meta','log','presence'], r=await Promise.all(ks.map(k=>db.all(k))), n={};
+    if(generation!==mapGeneration)return;
     ks.forEach((k,i)=>n[k]=r[i]); setSt(true);
     const changed=JSON.stringify({markers:n.markers,shapes:n.shapes,meta:n.meta})!==JSON.stringify({markers:data.markers,shapes:data.shapes,meta:data.meta});
     data.presence=n.presence||{};
     if(changed&&!popOpen){ data.markers=n.markers; data.shapes=n.shapes; data.meta=n.meta; undoStack=[]; redraw(); lastSavedSnapshot=copyState(); const q=$('#search'); if(q&&q.value) q.oninput(); const b=$('#undo-btn'); if(b) b.disabled=true; }
     if(!popOpen){ data.log=n.log; renderLog(); }
     renderOnline();
+    await maybeCreateDailyBackup(generation);
   }catch(e){ setSt(false); }
+}
+function renderBackupOptions(backups){
+  const select=$('#backup-select'),restore=$('#backup-restore');if(!select)return;
+  const old=select.value,dates=Object.keys(backups||{}).sort((a,b)=>b.localeCompare(a));
+  select.replaceChildren();
+  if(!dates.length){select.append(el('option','Noch keine Sicherung'));if(restore)restore.disabled=true;return;}
+  dates.forEach(date=>{const b=backups[date],label=date+(b&&b.time?' · '+new Date(b.time).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):'');const opt=el('option',label);opt.value=date;select.append(opt);});
+  if(dates.includes(old))select.value=old;
+  if(restore)restore.disabled=!edit;
+}
+async function maybeCreateDailyBackup(generation){
+  const today=new Date().toISOString().slice(0,10),run=activeMap+':'+today;
+  if(backupRun===run)return;
+  backupRun=run;
+  try{
+    const backups=await db.all('backups');
+    if(generation!==mapGeneration)return;
+    if(!backups[today]){
+      backups[today]={time:Date.now(),map:activeMap,markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{}};
+      const keep=Object.keys(backups).sort((a,b)=>b.localeCompare(a)).slice(0,30),trimmed={};
+      keep.forEach(date=>trimmed[date]=backups[date]);
+      await db.putAll('backups',trimmed);
+      if(generation!==mapGeneration)return;
+      renderBackupOptions(trimmed);
+    }else renderBackupOptions(backups);
+  }catch(e){backupRun='';console.error('Automatische Sicherung fehlgeschlagen.',e);}
+}
+async function restoreBackup(){
+  const select=$('#backup-select'),date=select&&select.value;
+  if(!edit||!date)return;
+  if(!confirm(`Sicherung vom ${date} für ${activeMap==='cp'?'Cayo Perico':'Los Santos'} wiederherstellen?`))return;
+  try{
+    const backups=await db.all('backups'),snapshot=backups[date];
+    if(!snapshot||!snapshot.markers||!snapshot.shapes||!snapshot.meta)throw new Error('Sicherung ist unvollständig.');
+    const before=copyState();
+    await Promise.all(['markers','shapes','meta'].map(k=>db.putAll(k,snapshot[k])));
+    undoStack.push(before);if(undoStack.length>50)undoStack.shift();
+    data.markers=snapshot.markers;data.shapes=snapshot.shapes;data.meta=snapshot.meta;
+    lastSavedSnapshot=copyState();redraw();logit(`Sicherung vom ${date} wiederhergestellt`);
+    const b=$('#undo-btn');if(b)b.disabled=false;setSt(true);
+  }catch(e){setSt(false);console.error('Sicherung konnte nicht wiederhergestellt werden.',e);alert('Sicherung konnte nicht wiederhergestellt werden. Bitte Verbindung und Sicherungsdaten prüfen.');}
+}
+function loadExportImage(src){
+  return new Promise((resolve,reject)=>{
+    const image=new Image();
+    image.onload=()=>resolve(image);
+    image.onerror=()=>reject(new Error('Kartenbild konnte nicht geladen werden: '+src));
+    image.src=src;
+  });
+}
+function exportVisibleMap(ctx,size){
+  const u=size/1000, px=x=>x*size, py=y=>y*size;
+  ctx.save();
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  for(const [id,o] of Object.entries(data.markers||{})){
+    if(!TYPES[o.t]||hidden.has(o.t)) continue;
+    const x=px(+o.x),y=py(+o.y),color=TYPES[o.t][2], status=o.s||'a';
+    if(+o.r>0&&RAD.includes(o.t)){
+      const radius=+o.r*u;
+      ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);
+      ctx.fillStyle=color+'1a';ctx.fill();
+      ctx.strokeStyle=color;ctx.lineWidth=Math.max(2,1.5*u);ctx.stroke();
+    }
+    const mark=34*u;
+    ctx.save();ctx.translate(x,y);
+    if(status==='z') ctx.globalAlpha=.55;
+    ctx.fillStyle='#0b0b0b';ctx.strokeStyle=color;ctx.lineWidth=2*u;
+    if(status==='b') ctx.setLineDash([5*u,3*u]);
+    ctx.rotate(Math.PI/4);ctx.fillRect(-mark/2,-mark/2,mark,mark);ctx.strokeRect(-mark/2,-mark/2,mark,mark);
+    ctx.setLineDash([]);ctx.rotate(-Math.PI/4);
+    ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=`600 ${Math.max(14,12*u)}px "Barlow Condensed",sans-serif`;
+    ctx.fillText(TYPES[o.t][1],0,0);
+    ctx.restore();
+  }
+  for(const [id,o] of Object.entries(data.shapes||{})){
+    if(!KINDS[o.k]||hidden.has(o.k)) continue;
+    if(o.k==='link'){
+      const a=data.markers[o.a],b=data.markers[o.b];
+      if(!a||!b||hidden.has(a.t)||hidden.has(b.t)) continue;
+      ctx.beginPath();ctx.setLineDash([2*u,6*u]);ctx.strokeStyle=o.c||'#8fe3a8';ctx.lineWidth=2*u;
+      ctx.moveTo(px(+a.x),py(+a.y));ctx.lineTo(px(+b.x),py(+b.y));ctx.stroke();ctx.setLineDash([]);
+      continue;
+    }
+    if(!Array.isArray(o.p)||!o.p.length) continue;
+    if(o.k==='text'){
+      ctx.save();ctx.fillStyle=o.c||'#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.shadowColor='#000';ctx.shadowBlur=8*u;ctx.font=`600 ${22*u}px "Barlow Condensed",sans-serif`;
+      ctx.fillText(String(o.n||'Text'),px(+o.p[0][0]),py(+o.p[0][1]));ctx.restore();continue;
+    }
+    const points=o.p.map(p=>[px(+p[0]),py(+p[1])]);
+    ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);points.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+    if(o.k==='zone'){
+      ctx.closePath();ctx.fillStyle=o.c||'#8fe3a8';ctx.globalAlpha=.18;ctx.fill();ctx.globalAlpha=1;
+    }
+    ctx.strokeStyle=o.c||'#8fe3a8';ctx.lineWidth=(o.k==='line'?3:2)*u;
+    if(o.k==='line') ctx.setLineDash([8*u,6*u]);
+    ctx.stroke();ctx.setLineDash([]);
+    if(['arrow','route'].includes(o.k)&&points.length>1){
+      const a=points[points.length-2],b=points[points.length-1],angle=Math.atan2(b[1]-a[1],b[0]-a[0]),head=13*u;
+      ctx.beginPath();ctx.moveTo(b[0],b[1]);
+      ctx.lineTo(b[0]-head*Math.cos(angle-.48),b[1]-head*Math.sin(angle-.48));
+      ctx.lineTo(b[0]-head*Math.cos(angle+.48),b[1]-head*Math.sin(angle+.48));
+      ctx.closePath();ctx.fillStyle=o.c||'#8fe3a8';ctx.fill();
+    }
+  }
+  if(cmd()){
+    ctx.save();ctx.strokeStyle='rgba(119,205,190,.075)';ctx.lineWidth=Math.max(1,u);
+    for(let n=56;n<1000;n+=56){ctx.beginPath();ctx.moveTo(px(n),0);ctx.lineTo(px(n),size);ctx.moveTo(0,py(n));ctx.lineTo(size,py(n));ctx.stroke();}
+    const shade=ctx.createRadialGradient(size/2,size/2,size*.2,size/2,size/2,size*.76);
+    shade.addColorStop(0,'rgba(0,0,0,0)');shade.addColorStop(1,'rgba(0,0,0,.68)');
+    ctx.fillStyle=shade;ctx.fillRect(0,0,size,size);ctx.restore();
+  }
+  if(gridLayer&&map.hasLayer(gridLayer)){
+    ctx.save();ctx.strokeStyle='rgba(200,227,210,.48)';ctx.fillStyle='rgba(245,248,246,.92)';
+    ctx.lineWidth=Math.max(1,u);
+    for(let n=0;n<=1000;n+=100){ctx.beginPath();ctx.moveTo(px(n),0);ctx.lineTo(px(n),size);ctx.moveTo(0,py(n));ctx.lineTo(size,py(n));ctx.stroke();}
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`500 ${Math.max(13,11*u)}px "Barlow Condensed",sans-serif`;
+    for(let row=0;row<10;row++)for(let col=0;col<10;col++)ctx.fillText(String.fromCharCode(65+col)+'-'+(row+1),px((col+.5)*100),py((row+.5)*100));
+    ctx.restore();
+  }
+  ctx.restore();
+}
+async function exportPng(){
+  const button=$('#png-export');if(button)button.disabled=true;
+  try{
+    await document.fonts.ready;
+      const src=activeMap==='cp'?'cp.png':cur==='sat'?'satellit.jpg':'karte.jpg',image=await loadExportImage(src);
+    const size=Math.min(image.naturalWidth||2048,4096),canvas=document.createElement('canvas');
+    canvas.width=size;canvas.height=size;
+    const ctx=canvas.getContext('2d');
+    if(!ctx) throw new Error('Canvas ist nicht verfügbar.');
+    ctx.fillStyle=cmd()?'#45494b':activeMap==='cp'?'#4caec8':'#e5e5e5';ctx.fillRect(0,0,size,size);
+    ctx.save();
+    if(cmd()) ctx.filter='grayscale(.72) sepia(.18) hue-rotate(145deg) saturate(.72) brightness(.53) contrast(1.2)';
+    if(activeMap==='ls'&&cur==='sat'){
+      const x0=SB[0][1]/1000,y0=1-SB[1][1]/1000;
+      const width=(SB[1][1]-SB[0][1])/1000,height=(SB[1][0]-SB[0][0])/1000;
+      ctx.drawImage(image,x0*size,y0*size,width*size,height*size);
+    }else ctx.drawImage(image,0,0,size,size);
+    ctx.restore();exportVisibleMap(ctx,size);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+    if(!blob) throw new Error('PNG-Datei konnte nicht erzeugt werden.');
+    const url=URL.createObjectURL(blob),a=el('a');
+    a.href=url;a.download='lagebild-'+new Date().toISOString().slice(0,10)+'.png';a.style.display='none';document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(e){console.error('PNG-Export fehlgeschlagen.',e);alert('PNG-Export fehlgeschlagen. Prüfe, ob das Kartenbild im selben Ordner liegt, und versuche es erneut.');}
+  finally{if(button)button.disabled=false;}
 }
 function exportJson(){
   const payload={version:2,exportedAt:new Date().toISOString(),markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{},log:data.log||{}};
@@ -563,7 +813,7 @@ function validBackup(j){
     if(!obj(s)||!KINDS[s.k]||typeof s.n!=='string') return false;
     if(s.k==='link'){ if(!j.markers[s.a]||!j.markers[s.b]) return false; }
     else if(!Array.isArray(s.p)||!s.p.length||s.p.some(p=>!Array.isArray(p)||p.length!==2||!Number.isFinite(+p[0])||!Number.isFinite(+p[1])||p[0]<0||p[0]>1||p[1]<0||p[1]>1)) return false;
-    if(['line','arrow'].includes(s.k)&&s.p.length<2||s.k==='zone'&&s.p.length<3) return false;
+    if(['line','arrow','route'].includes(s.k)&&s.p.length<2||s.k==='zone'&&s.p.length<3) return false;
   }
   return true;
 }
