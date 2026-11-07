@@ -18,7 +18,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:16px;pa
 .brand small{color:var(--mut);font-size:12.5px}
 nav{display:flex;gap:22px;font-size:14px}
 nav a{color:var(--mut);text-decoration:none}
-nav a:first-child{color:var(--ink);border-bottom:2px solid var(--ink)}
+nav a{cursor:pointer}
+nav a.on{color:var(--ink);border-bottom:2px solid var(--ink)}
 #clk{display:none;font:600 20px 'Barlow Condensed',sans-serif;letter-spacing:.08em}
 main{flex:1;display:flex;min-height:0}
 #mapwrap{position:relative;flex:1;min-width:0}
@@ -54,9 +55,9 @@ body.cmd{background:#050505;color:#d6d6d6}
 .cmd #layers{border-color:#333;background:#0b0b0b}
 .cmd #layers button{color:#999}
 .cmd #layers button.on{background:#222;color:var(--acc)}
-.cmd .leaflet-image-layer{filter:grayscale(.5) brightness(.82) contrast(1.1)}
+.cmd .leaflet-image-layer{filter:grayscale(1) brightness(.55) contrast(1.3)}
 .cmd #map{background:#050a0d}
-.cmd #mapwrap::after{content:'';position:absolute;inset:0;z-index:600;pointer-events:none;background:linear-gradient(rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.4))}
+.cmd #mapwrap::after{content:'';position:absolute;inset:0;z-index:600;pointer-events:none;background:linear-gradient(rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7))}
 .cmd footer{background:#0b0b0b;color:#555}
 .mk{width:28px;height:28px;display:grid;place-items:center;background:#0b0b0b;border:2px solid var(--c);color:var(--c);font:600 12px 'Barlow Condensed',sans-serif;box-shadow:0 0 12px var(--c);transform:rotate(45deg)}
 .mk i{font-style:normal;transform:rotate(-45deg)}
@@ -70,7 +71,7 @@ body.cmd{background:#050505;color:#d6d6d6}
 #gate input{font:inherit;padding:8px;border:1px solid var(--line);border-radius:4px;width:180px}
 #gate input.bad{border-color:#c33}
 #gate button{font:inherit;background:#111;color:#fff;border:0;border-radius:4px;padding:8px 14px;cursor:pointer}
-@media(max-width:800px){main{flex-direction:column}aside{width:auto;max-height:42vh;border-left:0;border-top:1px solid #2a2a2a}nav{display:none}}
+@media(max-width:800px){main{flex-direction:column}aside{width:auto;max-height:42vh;border-left:0;border-top:1px solid #2a2a2a}}
 @media(prefers-reduced-motion:reduce){#boot{transition:none}}
 .mk.st-b{border-style:dashed;box-shadow:none}
 .mk.st-z{filter:grayscale(1);opacity:.55;box-shadow:none}
@@ -85,12 +86,38 @@ body.cmd{background:#050505;color:#d6d6d6}
 .chip.off{opacity:.35;text-decoration:line-through}
 .tooling #map,.tooling .leaflet-grab{cursor:crosshair}
 .leaflet-tooltip.mt{background:#0b0b0b;color:#fff;border:1px solid #555;border-radius:0}
+#presse{display:none;flex:1;overflow:auto;padding:32px 20px;background:var(--bg)}
+#presse>div{max-width:780px;margin:0 auto}
+#presse h2{margin:0 0 20px;font-size:22px}
+#presse article{background:#fff;border:1px solid var(--line);padding:20px}
+#presse h3{margin:0 0 2px;font-size:18px}
+#presse p{margin:0 0 14px;color:var(--mut)}
+#presse img{width:100%;height:auto;display:block;border:1px solid var(--line)}
+body.vp #presse{display:block}
+body.vp #mapwrap{display:none}
+.cmd #presse{display:none!important}
+#def{display:none;font:600 20px 'Barlow Condensed',sans-serif;letter-spacing:.1em;border:1px solid;padding:2px 12px}
+.cmd #def{display:block}
+#alarm{display:none;position:fixed;inset:0;z-index:3500;pointer-events:none;box-shadow:inset 0 0 0 var(--w) var(--dc),inset 0 0 calc(var(--w)*8) var(--dc)}
+.cmd #alarm.on{display:block;animation:blink var(--sp) ease-in-out infinite}
+@keyframes blink{50%{opacity:.12}}
+@media(prefers-reduced-motion:reduce){.cmd #alarm.on{animation:none}}
+.tx{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font:600 17px 'Barlow Condensed',sans-serif;letter-spacing:.12em;text-shadow:0 0 4px #000,0 0 9px #000}
+.ah{font-size:20px;line-height:20px;text-align:center;text-shadow:0 0 4px #000}
+aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase}
+#log{font-size:12px;color:#888;max-height:150px;overflow:auto;margin-top:6px}
+#log div{padding:2px 0;border-bottom:1px solid #1c1c1c}
+.pres header{position:fixed;top:0;right:0;left:auto;background:none;border:0;padding:12px 16px;z-index:3600}
+.pres .brand,.pres #clk,.pres aside,.pres footer,.pres #xy{display:none}
+#pexit{display:none;position:fixed;left:12px;bottom:12px;z-index:3600;font:inherit;font-size:13px;background:#0b0b0b;color:#d6d6d6;border:1px solid #555;padding:7px 12px;cursor:pointer}
+.pres #pexit{display:block}
 </style>
 </head>
 <body>
 <header>
   <div class="brand"><span class="seal" id="seal">LS</span><div><b id="bt">Los Santos Government</b><small id="bs">Amt für Stadtplanung und Geoinformation</small></div></div>
-  <div id="clk"></div>
+  <nav><a href="#" data-v="map" class="on">Stadtplan</a><a href="#" data-v="presse">Pressemitteilungen</a></nav>
+  <div id="def"></div><div id="clk"></div>
 </header>
 <main>
   <div id="mapwrap">
@@ -98,16 +125,18 @@ body.cmd{background:#050505;color:#d6d6d6}
     <div id="layers"><button data-l="karte" class="on">Stadtplan</button><button data-l="sat">Luftbild</button></div>
     <div id="xy"></div>
   </div>
+  <section id="presse"><div><h2>Pressemitteilungen</h2><article><h3>Rücktritt des Vice President of the United States</h3><p>Mitteilung vom 18.09.2026</p><a href="pressemitteilung.jpg" target="_blank"><img src="pressemitteilung.jpg" alt="Pressemitteilung: Rücktritt des Vice President of the United States, Mitteilung vom 18.09.2026"></a></article></div></section>
   <aside id="side"></aside>
 </main>
 <footer><span>© Los Santos Government</span><a id="v">Version 3.2.1</a></footer>
 <div id="gate"><div><input id="code" type="password" placeholder="Zugangscode" autocomplete="off"><button id="go">OK</button></div></div>
+<div id="alarm"></div><button id="pexit">Präsentation beenden</button>
 <div id="boot"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ===== KONFIGURATION ===== */
-const CODE = 'DOD';
+// Codewörter stehen im Skript unter CODES (DOD = ansehen, STEIN = bearbeiten)
 // Firebase Realtime Database URL ohne Slash am Ende, z.B. 'https://MEIN-PROJEKT-default-rtdb.europe-west1.firebasedatabase.app'
 // Leer = Speicherung nur im eigenen Browser.
 const DB_URL = 'https://govseite-default-rtdb.europe-west1.firebasedatabase.app';
@@ -119,8 +148,9 @@ const M_PER_UNIT = 0;     // Meter pro Karteneinheit (Karte = 1000 Einheiten bre
 /* ========================= */
 
 const TYPES = {
-  silo:['Raketensilo','R','#ff5a4d'], base:['Armeestützpunkt','B','#e8e8e8'], aa:['Flugabwehr','F','#f0b24a'],
-  radar:['Radarstation','Ra','#8fe3a8'], air:['Luftwaffenbasis','L','#9ac7ff'], navy:['Marinestützpunkt','M','#6fa8dc'], hq:['Hauptquartier','HQ','#ffffff']
+  silo:['Raketensilo','R','#ff5a4d'], base:['Army Außenposten','B','#e8e8e8'], aa:['Flugabwehr','F','#f0b24a'],
+  radar:['Radarstation','Ra','#8fe3a8'], air:['Airforce Base','L','#9ac7ff'], navy:['Marinestützpunkt','M','#6fa8dc'], hq:['Hauptquartier','HQ','#ffffff'],
+  rsr:['RSS Resolute','RS','#c9a0ff'], bunker:['Bunker','Bu','#d0a26a']
 };
 const $ = s => document.querySelector(s);
 const map = L.map('map',{crs:L.CRS.Simple,minZoom:-1.5,maxZoom:3,zoomSnap:.25,attributionControl:false,maxBounds:[[-150,-150],[1150,1150]],maxBoundsViscosity:.8});
@@ -140,24 +170,35 @@ document.querySelectorAll('#layers button').forEach(b=>b.onclick=()=>setLayer(b.
 map.fitBounds(KB); setLayer('karte'); $('#layers').style.display=LUFTBILD?'flex':'none';
 
 /* ---- Zugang ---- */
+const CODES={DOD:'view',STEIN:'edit'};
 $('#v').onclick = () => { $('#gate').style.display='grid'; $('#code').value=''; $('#code').focus(); };
 $('#gate').onclick = e => { if(e.target.id==='gate') $('#gate').style.display='none'; };
 function tryCode(){
-  const i=$('#code');
-  if(i.value.trim().toUpperCase()===CODE){ $('#gate').style.display='none'; enter(true); }
-  else { i.classList.add('bad'); i.value=''; setTimeout(()=>i.classList.remove('bad'),600); }
+  const i=$('#code'), r=CODES[i.value.trim().toUpperCase()];
+  if(r){
+    $('#gate').style.display='none';
+    if(r==='edit'){ user=(prompt('Name für das Änderungsprotokoll:')||'').trim().slice(0,30)||'Unbekannt'; localStorage.setItem('ls_user',user); }
+    enter(true,r);
+  } else { i.classList.add('bad'); i.value=''; setTimeout(()=>i.classList.remove('bad'),600); }
 }
 $('#go').onclick=tryCode; $('#code').onkeydown=e=>{ if(e.key==='Enter') tryCode(); };
+function showView(v){ document.body.classList.toggle('vp',v==='presse'); document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v)); map.invalidateSize(); }
+document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{ e.preventDefault(); showView(a.dataset.v); });
+$('#pexit').onclick=()=>pres(false);
 
 /* ---- Datenhaltung ---- */
 const DB = DB_URL.replace(/\/$/,'');
 const db = {
   async all(k){ if(!DB) return JSON.parse(localStorage.getItem('ls_'+k)||'{}'); const r=await fetch(`${DB}/${k}.json`); if(!r.ok) throw 0; return (await r.json())||{}; },
   async put(k,id,o){ if(!DB){ const a=await this.all(k); a[id]=o; localStorage.setItem('ls_'+k,JSON.stringify(a)); return; } const r=await fetch(`${DB}/${k}/${id}.json`,{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; },
-  async del(k,id){ if(!DB){ const a=await this.all(k); delete a[id]; localStorage.setItem('ls_'+k,JSON.stringify(a)); return; } const r=await fetch(`${DB}/${k}/${id}.json`,{method:'DELETE'}); if(!r.ok) throw 0; }
+  async del(k,id){ if(!DB){ const a=await this.all(k); delete a[id]; localStorage.setItem('ls_'+k,JSON.stringify(a)); return; } const r=await fetch(`${DB}/${k}/${id}.json`,{method:'DELETE'}); if(!r.ok) throw 0; },
+  async putAll(k,o){ if(!DB){ localStorage.setItem('ls_'+k,JSON.stringify(o)); return; } const r=await fetch(`${DB}/${k}.json`,{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; }
 };
 const STATUS={a:'Aktiv',b:'Im Bau',z:'Zerstört'}, RAD=['silo','radar','aa'], COLORS=['#8fe3a8','#ff5a4d','#6fa8dc','#f0b24a','#ffffff'];
-let data={markers:{},shapes:{}}, mk={}, sh={}, tool=null, col=COLORS[0], pts=[], mpts=[], tmp=null, mline=null, mlab=null, btns={}, hidden=new Set(), busy=0, popOpen=0, timer=null, clock=null;
+const KINDS={line:'Linie',zone:'Zone',arrow:'Pfeil',text:'Text',link:'Verbindung'}, DRAW=['line','zone','arrow'];
+const DC={5:'#6fa8dc',4:'#8fe3a8',3:'#f0d34a',2:'#ff5a4d',1:'#ffffff'};
+const EMPTY=()=>({markers:{},shapes:{},meta:{},log:{}});
+let data=EMPTY(), mk={}, sh={}, tool=null, col=COLORS[0], pts=[], mpts=[], tmp=null, mline=null, mlab=null, btns={}, hidden=new Set(), busy=0, popOpen=0, timer=null, clock=null, edit=false, user='Unbekannt', linkA=null, lastEsc=0;
 const group=L.layerGroup(), cmd=()=>document.body.classList.contains('cmd');
 const fmt=u=>M_PER_UNIT?((u*=M_PER_UNIT)>=1000?(u/1000).toFixed(1)+' km':Math.round(u)+' m'):Math.round(u)+' E';
 const pt=(x,y)=>[1000*(1-y),1000*x];
@@ -165,65 +206,99 @@ const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 function el(tag,txt){ const e=document.createElement(tag); if(txt!=null) e.textContent=txt; return e; }
 function btn(txt,fn){ const b=el('button',txt); b.onclick=fn; return b; }
 function icon(o){ const [,c,cl]=TYPES[o.t]; return L.divIcon({className:'',html:`<div class="mk st-${o.s||'a'}" style="--c:${cl}"><i>${c}</i></div>`,iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-16]}); }
+function logit(a){ if(!edit) return; const id=newId(), o={t:Date.now(),u:user,a}; data.log[id]=o; db.put('log',id,o).catch(()=>{}); }
+async function write(fn){ busy=1; try{ await fn(); setSt(true); }catch(e){ setSt(false); } busy=0; }
+async function save(k,id,o,m){ await write(()=>db.put(k,id,o)); logit(m); map.closePopup(); redraw(); }
+async function remove(k,id,m){ delete data[k][id]; await write(()=>db.del(k,id)); logit(m); map.closePopup(); redraw(); }
+function viewPop(t,o,x){ const d=el('div'); d.className='pp'; d.append(el('b',t),el('div',o.n)); if(x) d.append(el('small',x)); if(o.note) d.append(el('div',o.note)); return d; }
 function popMk(id){
-  const o=data.markers[id], d=el('div'); d.className='pp';
+  const o=data.markers[id], T=TYPES[o.t];
+  if(!edit) return viewPop(T[0],o,STATUS[o.s||'a']+(o.r>0&&RAD.includes(o.t)?' · Radius '+fmt(o.r):''));
+  const d=el('div'); d.className='pp';
   const i=el('input'); i.value=o.n; i.maxLength=60;
   const st=el('select'); for(const [k,v] of Object.entries(STATUS)){ const p=el('option',v); p.value=k; st.append(p); } st.value=o.s||'a';
   const nt=el('textarea'); nt.value=o.note||''; nt.placeholder='Notiz'; nt.maxLength=500;
-  d.append(el('b',TYPES[o.t][0]),i,st);
+  d.append(el('b',T[0]),i,st);
   let rg=null;
   if(RAD.includes(o.t)){ rg=el('input'); rg.type='range'; rg.min=0; rg.max=300; rg.value=o.r||0; const lb=el('small');
     const up=()=>lb.textContent='Radius: '+(+rg.value>0?fmt(+rg.value):'aus'); rg.oninput=up; up(); d.append(lb,rg); }
   d.append(nt,
-    btn('Speichern',async()=>{ o.n=i.value.trim()||TYPES[o.t][0]; o.s=st.value; o.note=nt.value.trim(); if(rg) o.r=+rg.value; await write(()=>db.put('markers',id,o)); map.closePopup(); redraw(); }),
-    btn('Löschen',async()=>{ delete data.markers[id]; await write(()=>db.del('markers',id)); map.closePopup(); redraw(); }));
+    btn('Speichern',()=>{ o.n=i.value.trim()||T[0]; o.s=st.value; o.note=nt.value.trim(); if(rg) o.r=+rg.value; save('markers',id,o,`${T[0]} „${o.n}“ geändert`); }),
+    btn('Löschen',()=>{ for(const [k,s] of Object.entries(data.shapes)) if(s.a===id||s.b===id){ delete data.shapes[k]; db.del('shapes',k); } remove('markers',id,`${T[0]} „${o.n}“ gelöscht`); }));
   return d;
 }
 function popSh(id){
-  const o=data.shapes[id], d=el('div'); d.className='pp';
+  const o=data.shapes[id];
+  if(!edit) return viewPop(KINDS[o.k],o);
+  const d=el('div'); d.className='pp';
   const i=el('input'); i.value=o.n; i.maxLength=60;
   const nt=el('textarea'); nt.value=o.note||''; nt.placeholder='Notiz'; nt.maxLength=500;
-  d.append(el('b',o.k==='zone'?'Zone':'Linie'),i,nt,
-    btn('Speichern',async()=>{ o.n=i.value.trim()||o.n; o.note=nt.value.trim(); await write(()=>db.put('shapes',id,o)); map.closePopup(); redraw(); }),
-    btn('Löschen',async()=>{ delete data.shapes[id]; await write(()=>db.del('shapes',id)); map.closePopup(); redraw(); }));
+  d.append(el('b',KINDS[o.k]),i,nt,
+    btn('Speichern',()=>{ o.n=i.value.trim()||o.n; o.note=nt.value.trim(); save('shapes',id,o,`${KINDS[o.k]} „${o.n}“ geändert`); }),
+    btn('Löschen',()=>remove('shapes',id,`${KINDS[o.k]} „${o.n}“ gelöscht`)));
   return d;
 }
-async function write(fn){ busy=1; try{ await fn(); setSt(true); }catch(e){ setSt(false); } busy=0; }
 function redraw(){
   group.clearLayers(); mk={}; sh={};
   for(const [id,o] of Object.entries(data.markers)){
     if(!TYPES[o.t]||hidden.has(o.t)) continue;
     const p=pt(o.x,o.y);
     if(o.r>0&&RAD.includes(o.t)) L.circle(p,{radius:o.r,color:TYPES[o.t][2],weight:1.5,fillOpacity:.1,interactive:false}).addTo(group);
-    mk[id]=L.marker(p,{icon:icon(o),title:o.n}).bindPopup(()=>popMk(id)).addTo(group);
+    const m=mk[id]=L.marker(p,{icon:icon(o),title:o.n,draggable:edit}).bindPopup(()=>popMk(id)).addTo(group);
+    m.on('click',()=>{ if(tool!=='link') return; m.closePopup(); if(!linkA) linkA=id; else { if(linkA!==id) mkLink(linkA,id); linkA=null; } });
+    m.on('dragend',async()=>{ const q=m.getLatLng(); o.x=q.lng/1000; o.y=1-q.lat/1000; await write(()=>db.put('markers',id,o)); logit(`${TYPES[o.t][0]} „${o.n}“ verschoben`); redraw(); });
   }
   for(const [id,o] of Object.entries(data.shapes)){
-    if(hidden.has(o.k)||!o.p) continue;
-    const p=o.p.map(q=>pt(q[0],q[1]));
-    sh[id]=(o.k==='zone'?L.polygon(p,{color:o.c,weight:2,fillOpacity:.18}):L.polyline(p,{color:o.c,weight:3,dashArray:'8 6'})).bindPopup(()=>popSh(id)).addTo(group);
+    if(hidden.has(o.k)) continue; let g;
+    if(o.k==='text'){
+      const t=el('div',o.n); t.className='tx'; t.style.color=o.c;
+      g=L.marker(pt(o.p[0][0],o.p[0][1]),{icon:L.divIcon({className:'',html:t,iconSize:[0,0]}),draggable:edit});
+      g.on('dragend',async()=>{ const q=g.getLatLng(); o.p=[[q.lng/1000,1-q.lat/1000]]; await write(()=>db.put('shapes',id,o)); logit(`Text „${o.n}“ verschoben`); });
+    } else if(o.k==='link'){
+      const a=data.markers[o.a], b=data.markers[o.b]; if(!a||!b||hidden.has(a.t)||hidden.has(b.t)) continue;
+      g=L.polyline([pt(a.x,a.y),pt(b.x,b.y)],{color:o.c,weight:2,dashArray:'2 6'});
+    } else {
+      const p=o.p.map(q=>pt(q[0],q[1]));
+      g=o.k==='zone'?L.polygon(p,{color:o.c,weight:2,fillOpacity:.18}):L.polyline(p,{color:o.c,weight:3,dashArray:o.k==='line'?'8 6':null});
+      if(o.k==='arrow'&&p.length>1){ const a=p[p.length-2], b=p[p.length-1], deg=-Math.atan2(b[0]-a[0],b[1]-a[1])*180/Math.PI;
+        L.marker(b,{interactive:false,icon:L.divIcon({className:'',html:`<div class="ah" style="color:${o.c};transform:rotate(${deg}deg)">▶</div>`,iconSize:[20,20],iconAnchor:[10,10]})}).addTo(group); }
+    }
+    sh[id]=g.bindPopup(()=>popSh(id)).addTo(group);
   }
-  renderList();
+  renderList(); renderLog(); applyDef();
 }
+function mkLink(a,b){ const id=newId(), o={k:'link',c:col,n:'Verbindung',a,b}; data.shapes[id]=o; redraw(); write(()=>db.put('shapes',id,o)); logit('Verbindung gesetzt'); }
 function renderList(){
   const l=$('#list'); if(!l) return; l.replaceChildren(); const rows=[];
   for(const id in mk){ const o=data.markers[id]; rows.push([o.t,o.n,TYPES[o.t][1]+(o.s&&o.s!=='a'?' · '+STATUS[o.s]:''),TYPES[o.t][2],()=>{ map.flyTo(mk[id].getLatLng(),1.5); mk[id].openPopup(); }]); }
-  for(const id in sh){ const o=data.shapes[id]; rows.push([o.k,o.n,o.k==='zone'?'Zone':'Linie',o.c,()=>{ map.flyToBounds(sh[id].getBounds(),{maxZoom:1.5}); sh[id].openPopup(); }]); }
+  for(const id in sh){ const o=data.shapes[id], g=sh[id]; rows.push([o.k,o.n,KINDS[o.k],o.c,()=>{ g.getBounds?map.flyToBounds(g.getBounds(),{maxZoom:1.5}):map.flyTo(g.getLatLng(),1.5); g.openPopup(); }]); }
   rows.sort((a,b)=>a[0].localeCompare(b[0]));
-  if(!rows.length){ const e=el('div','Keine Einträge. Werkzeug wählen und auf die Karte klicken.'); e.style.cssText='font-size:13px;color:#777'; l.append(e); }
+  if(!rows.length){ const e=el('div','Keine Einträge.'); e.style.cssText='font-size:13px;color:#777'; l.append(e); }
   rows.forEach(r=>{ const a=el('a'); a.style.borderColor=r[3]; a.append(el('div',r[1]),el('span',r[2])); a.onclick=r[4]; l.append(a); });
   $('#cnt').textContent=rows.length;
 }
+function renderLog(){
+  const l=$('#log'); if(!l) return; l.replaceChildren();
+  Object.values(data.log).sort((a,b)=>b.t-a.t).slice(0,25).forEach(o=>l.append(el('div',new Date(o.t).toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'})+' '+o.u+': '+o.a)));
+}
+function applyDef(){
+  const v=+(data.meta.defcon&&data.meta.defcon.v)||5, c=DC[v], d=$('#def'), a=$('#alarm');
+  d.textContent='DEFCON '+v; d.style.color=d.style.borderColor=c; a.style.setProperty('--dc',c);
+  if(v<=3){ a.style.setProperty('--w',[0,10,6,3][v]+'px'); a.style.setProperty('--sp',[0,.6,1.2,2.4][v]+'s'); }
+  a.classList.toggle('on',v<=3);
+}
+function setDef(v){ data.meta.defcon={v}; applyDef(); write(()=>db.put('meta','defcon',{v})); logit('DEFCON '+v+' gesetzt'); }
 function setSt(ok){ const s=$('#stat'); if(!s) return; s.className=ok?'ok':''; s.textContent=ok?(DB?'Verbunden, Daten werden geteilt':'Lokaler Modus, nur dieser Browser'):'Keine Verbindung zur Datenbank'; }
 async function sync(){
   if(busy) return;
-  try{ const [m,s]=await Promise.all([db.all('markers'),db.all('shapes')]); setSt(true);
-    if(JSON.stringify([m,s])!==JSON.stringify([data.markers,data.shapes]) && !popOpen){ data={markers:m,shapes:s}; redraw(); } }
+  try{ const ks=Object.keys(EMPTY()), r=await Promise.all(ks.map(k=>db.all(k))), n={}; ks.forEach((k,i)=>n[k]=r[i]); setSt(true);
+    if(JSON.stringify(n)!==JSON.stringify(data) && !popOpen){ data=n; redraw(); } }
   catch(e){ setSt(false); }
 }
 /* ---- Werkzeuge ---- */
-function resetTemp(){ pts=[]; mpts=[]; [tmp,mline,mlab].forEach(l=>l&&map.removeLayer(l)); tmp=mline=mlab=null; }
+function resetTemp(){ pts=[]; mpts=[]; linkA=null; [tmp,mline,mlab].forEach(l=>l&&map.removeLayer(l)); tmp=mline=mlab=null; }
 function sel(){ for(const k in btns) btns[k].classList.toggle('on',k===tool); document.body.classList.toggle('tooling',!!tool); }
-function setTool(k){ tool=k===tool?null:k; resetTemp(); sel(); }
+function setTool(k){ if(!edit&&k&&k!=='measure') return; tool=k===tool?null:k; resetTemp(); sel(); }
 function preview(){
   if(tmp) map.removeLayer(tmp); if(!pts.length){ tmp=null; return; }
   const p=pts.map(q=>pt(q[0],q[1])), o={color:col,weight:2,dashArray:'4 4'};
@@ -237,45 +312,67 @@ function mpreview(){
 }
 async function finish(){
   if(pts.length<(tool==='zone'?3:2)) return;
-  const id=newId(), o={k:tool,c:col,n:tool==='zone'?'Zone':'Linie',p:pts.slice()};
-  resetTemp(); data.shapes[id]=o; redraw(); sh[id].openPopup(); await write(()=>db.put('shapes',id,o));
+  const id=newId(), o={k:tool,c:col,n:KINDS[tool],p:pts.slice()};
+  resetTemp(); data.shapes[id]=o; redraw(); sh[id].openPopup(); await write(()=>db.put('shapes',id,o)); logit(KINDS[o.k]+' gezeichnet');
 }
 map.on('popupopen',()=>popOpen=1); map.on('popupclose',()=>popOpen=0);
 map.on('click',async e=>{
   if(!cmd()||!tool) return;
   const x=e.latlng.lng/1000, y=1-e.latlng.lat/1000;
-  if(tool==='line'||tool==='zone'){ pts.push([x,y]); preview(); return; }
+  if(DRAW.includes(tool)){ pts.push([x,y]); preview(); return; }
   if(tool==='measure'){ mpts.push(e.latlng); mpreview(); return; }
-  const id=newId(), o={t:tool,n:TYPES[tool][0],s:'a',x,y};
-  data.markers[id]=o; redraw(); mk[id].openPopup(); await write(()=>db.put('markers',id,o));
+  if(tool==='link') return;
+  const id=newId();
+  if(tool==='text'){ const o={k:'text',c:col,n:'Text',p:[[x,y]]}; data.shapes[id]=o; redraw(); sh[id].openPopup(); await write(()=>db.put('shapes',id,o)); logit('Beschriftung gesetzt'); return; }
+  const o={t:tool,n:TYPES[tool][0],s:'a',x,y};
+  data.markers[id]=o; redraw(); mk[id].openPopup(); await write(()=>db.put('markers',id,o)); logit(`${TYPES[tool][0]} gesetzt`);
 });
-map.on('dblclick',()=>{ if(cmd()&&(tool==='line'||tool==='zone')){ pts.pop(); finish(); } });
+map.on('dblclick',()=>{ if(cmd()&&DRAW.includes(tool)){ pts.pop(); finish(); } });
 map.on('contextmenu',()=>resetTemp());
 map.on('mousemove',e=>{ $('#xy').textContent=`X ${Math.round(e.latlng.lng)}  Y ${Math.round(1000-e.latlng.lat)}`; });
 document.addEventListener('keydown',e=>{
   if(!cmd()) return;
-  if(e.key==='Escape') setTool(null);
-  else if(e.key==='Enter'&&(tool==='line'||tool==='zone')&&document.activeElement.tagName!=='INPUT') finish();
+  if(e.key==='Escape'){ const n=Date.now(); if(n-lastEsc<600){ leave(); return; } lastEsc=n; if(document.body.classList.contains('pres')) pres(false); else setTool(null); }
+  else if(e.key==='Enter'&&DRAW.includes(tool)&&document.activeElement.tagName!=='INPUT') finish();
 });
+function pres(on){ document.body.classList.toggle('pres',on); map.invalidateSize(); }
+function exportJson(){
+  const b=new Blob([JSON.stringify({markers:data.markers,shapes:data.shapes,meta:data.meta},null,1)],{type:'application/json'}), a=el('a');
+  a.href=URL.createObjectURL(b); a.download='lagebild-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+async function importJson(e){
+  const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  try{ const j=JSON.parse(await f.text()); if(!confirm('Alle aktuellen Einträge werden durch die Datei ersetzt. Fortfahren?')) return;
+    await write(async()=>{ for(const k of ['markers','shapes','meta']) await db.putAll(k,j[k]||{}); });
+    data.markers=j.markers||{}; data.shapes=j.shapes||{}; data.meta=j.meta||{}; redraw(); logit('Backup eingespielt'); }
+  catch(err){ alert('Datei konnte nicht gelesen werden.'); }
+}
 
 /* ---- Moduswechsel ---- */
 function buildSide(){
   const s=$('#side'); s.replaceChildren(); btns={};
   const mkBtn=(k,label,c)=>{ const b=el('button',label); if(c) b.style.borderLeft='3px solid '+c; b.onclick=()=>setTool(k); btns[k]=b; return b; };
-  const t=el('div'); t.className='tools'; for(const [k,v] of Object.entries(TYPES)) t.append(mkBtn(k,v[0],v[2]));
-  const d=el('div'); d.className='tools'; d.append(mkBtn('line','Linie'),mkBtn('zone','Zone'),mkBtn('measure','Messen'));
-  const sw=el('div'); sw.className='sw';
-  COLORS.forEach(c=>{ const b=el('button'); b.style.background=c; if(c===col) b.className='on';
-    b.onclick=()=>{ col=c; sw.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); if(tmp) preview(); }; sw.append(b); });
+  const grid=(...n)=>{ const d=el('div'); d.className='tools'; d.append(...n); return d; };
+  const hint=el('div',(edit?'Linie/Zone/Pfeil: Punkte klicken, Doppelklick oder Enter beendet. Verbindung: zwei Einträge nacheinander anklicken. ':'')+'Messen: Rechtsklick setzt zurück. Esc wählt ab, zweimal Esc führt zur Tarnseite.'); hint.style.cssText='font-size:12px;color:#777;margin-top:8px';
+  if(edit){
+    s.append(el('h3','Platzieren'),grid(...Object.entries(TYPES).map(([k,v])=>mkBtn(k,v[0],v[2]))),el('h3','Zeichnen'),grid(mkBtn('line','Linie'),mkBtn('zone','Zone'),mkBtn('arrow','Pfeil'),mkBtn('text','Text'),mkBtn('link','Verbindung'),mkBtn('measure','Messen')));
+    const sw=el('div'); sw.className='sw';
+    COLORS.forEach(c=>{ const b=el('button'); b.style.background=c; if(c===col) b.className='on';
+      b.onclick=()=>{ col=c; sw.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); if(tmp) preview(); }; sw.append(b); });
+    const dv=[5,4,3,2,1].map(v=>{ const b=btn('DEFCON '+v,()=>setDef(v)); b.style.borderLeft='3px solid '+DC[v]; return b; });
+    s.append(sw,hint,el('h3','Alarmstufe'),grid(...dv));
+  } else s.append(el('h3','Werkzeug'),grid(mkBtn('measure','Messen')),hint);
   const fl=el('div'); fl.className='chips';
-  [...Object.entries(TYPES).map(([k,v])=>[k,v[0]]),['line','Linien'],['zone','Zonen']].forEach(([k,n])=>{
+  [...Object.entries(TYPES).map(([k,v])=>[k,v[0]]),...['line','zone','arrow','text','link'].map(k=>[k,KINDS[k]])].forEach(([k,n])=>{
     const c=el('button',n); c.className='chip'+(hidden.has(k)?' off':'');
     c.onclick=()=>{ hidden.has(k)?hidden.delete(k):hidden.add(k); c.classList.toggle('off'); redraw(); }; fl.append(c); });
-  const l=el('div'); l.id='list'; const st=el('div'); st.id='stat';
   const h3=el('h3','Einträge ('); const c=el('span'); c.id='cnt'; c.style.color='#fff'; h3.append(c,')');
+  const l=el('div'); l.id='list';
+  const lg=el('details'); lg.append(el('summary','Protokoll')); const ld=el('div'); ld.id='log'; lg.append(ld);
+  const fi=el('input'); fi.type='file'; fi.accept='.json'; fi.hidden=true; fi.onchange=importJson;
   const out=el('button','Abmelden'); out.id='out'; out.onclick=leave;
-  const hint=el('div','Linie/Zone: Punkte klicken, Doppelklick oder Enter beendet. Messen: Rechtsklick setzt zurück. Esc wählt ab.'); hint.style.cssText='font-size:12px;color:#777;margin-top:8px';
-  s.append(el('h3','Platzieren'),t,el('h3','Zeichnen'),d,sw,hint,el('h3','Filter'),fl,h3,l,el('h3','Status'),st,out);
+  const st=el('div'); st.id='stat';
+  s.append(el('h3','Filter'),fl,h3,l,lg,el('h3','Daten'),grid(btn('Export',exportJson),...(edit?[btn('Import',()=>fi.click())]:[]),btn('Präsentation',()=>pres(true))),fi,el('h3','Status'),st,out);
 }
 function boot(done){
   const b=$('#boot'); b.style.display='block'; b.style.opacity=1; b.textContent='';
@@ -283,23 +380,25 @@ function boot(done){
   let i=0; const t=setInterval(()=>{ if(i<lines.length){ b.textContent+=lines[i++]+'\n'; } else { clearInterval(t); b.style.opacity=0; setTimeout(()=>{ b.style.display='none'; done(); },500); } },
     matchMedia('(prefers-reduced-motion:reduce)').matches?10:450);
 }
-function enter(anim){
+function enter(anim,role){
   const go=()=>{
-    sessionStorage.setItem('ls','1'); document.body.classList.add('cmd'); map.doubleClickZoom.disable();
+    edit=role==='edit'; sessionStorage.setItem('ls',role); showView('map'); data=EMPTY();
+    document.body.classList.add('cmd'); map.doubleClickZoom.disable();
     $('#seal').textContent='DOD'; $('#bt').textContent='Joint Defense Command'; $('#bs').textContent='Strategische Lageübersicht';
-    buildSide(); group.addTo(map); map.invalidateSize(); map.fitBounds(KB); sync(); timer=setInterval(sync,5000);
+    buildSide(); applyDef(); group.addTo(map); map.invalidateSize(); map.fitBounds(KB); sync(); timer=setInterval(sync,5000);
     const tick=()=>$('#clk').textContent=new Date().toLocaleTimeString('de-DE'); tick(); clock=setInterval(tick,1000);
   };
   anim?boot(go):go();
 }
 function leave(){
-  sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel();
-  map.removeLayer(group); group.clearLayers(); data={markers:{},shapes:{}}; map.doubleClickZoom.enable();
-  document.body.classList.remove('cmd');
+  sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel(); pres(false);
+  map.removeLayer(group); group.clearLayers(); data=EMPTY(); edit=false; map.doubleClickZoom.enable();
+  $('#alarm').classList.remove('on'); document.body.classList.remove('cmd');
   $('#seal').textContent='LS'; $('#bt').textContent='Los Santos Government'; $('#bs').textContent='Amt für Stadtplanung und Geoinformation';
   map.invalidateSize();
 }
-if(sessionStorage.getItem('ls')) enter(false);
+const _r=sessionStorage.getItem('ls');
+if(_r){ user=localStorage.getItem('ls_user')||'Unbekannt'; enter(false,_r==='edit'?'edit':'view'); }
 </script>
 </body>
 </html>
