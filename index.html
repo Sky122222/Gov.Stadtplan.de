@@ -72,7 +72,8 @@ body.cmd{background:#050505;color:#d6d6d6}
 .pp input{background:#161616;border:1px solid #333;color:#fff;padding:6px;font:inherit}
 #boot{position:fixed;inset:0;z-index:5000;background:#000;color:var(--acc);font:500 17px 'Barlow Condensed',sans-serif;letter-spacing:.1em;padding:12vh 8vw;display:none;white-space:pre-line;transition:opacity .5s}
 #gate{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.55);display:none;place-items:center}
-#gate div{background:#fff;padding:20px;border-radius:6px;display:flex;gap:8px}
+#gate div{background:#fff;padding:20px;border-radius:6px;display:flex;gap:8px;flex-wrap:wrap}
+#gate .gate-error{width:100%;min-height:18px;color:#a22;font-size:12px}
 #gate input{font:inherit;padding:8px;border:1px solid var(--line);border-radius:4px;width:180px}
 #gate input.bad{border-color:#c33}
 #gate button{font:inherit;background:#111;color:#fff;border:0;border-radius:4px;padding:8px 14px;cursor:pointer}
@@ -188,6 +189,18 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 .grid-label span{font:500 11px 'Barlow Condensed',sans-serif;letter-spacing:.12em;color:#e8f4ed;text-shadow:0 1px 3px #000,0 0 7px #000}
 .vertex-handle{width:12px;height:12px;background:#fff;border:2px solid #111;border-radius:50%;box-shadow:0 0 0 2px #fff8}
 @media(max-width:800px){#namegate .ng-card{padding:24px}}
+#emergency-admin,#emergency-404{position:fixed;inset:0;z-index:7000;display:none;place-items:center;background:radial-gradient(ellipse at 50% 35%,#34393b,#080909 72%);color:#e8ebec}
+#emergency-admin .ng-card,#emergency-404 .ng-card{width:min(480px,calc(100vw - 32px));padding:30px;background:linear-gradient(145deg,#17191b,#090a0b);border:1px solid #596064;box-shadow:0 24px 90px #000,inset 0 1px #ffffff18}
+#emergency-admin .ng-kicker,#emergency-404 .ng-kicker{font:600 12px 'Barlow Condensed',sans-serif;letter-spacing:.24em;color:#aeb5ba}
+#emergency-admin h2,#emergency-404 h2{margin:8px 0;font:600 30px 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase}
+#emergency-admin p,#emergency-404 p{color:#a5abad;font-size:13px}
+#emergency-admin input{display:block;width:100%;margin:8px 0;padding:11px;background:#0a0b0c;border:1px solid #51565a;color:#fff;font:inherit}
+#emergency-admin button{width:100%;margin-top:8px;padding:11px;background:#e7eaeb;color:#111;border:0;font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+#emergency-admin button.secondary{background:#171a1c;color:#ddd;border:1px solid #454b4e}
+#emergency-404 button{width:100%;margin-top:22px;padding:9px;background:#171a1c;color:#aab1b4;border:1px solid #454b4e;font:500 12px 'Barlow Condensed',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+#emergency-admin .ng-error{min-height:20px;margin-top:8px;color:#ff9b9b;font-size:12px}
+#emergency-404 .error-code{font:600 clamp(72px,18vw,132px)/.9 'Barlow Condensed',sans-serif;color:#d4d8da;letter-spacing:.05em}
+#emergency-404 .error-rule{height:1px;background:#ffffff35;margin:20px 0}
 </style>
 </head>
 <body>
@@ -207,8 +220,10 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
   <aside id="side"></aside>
 </main>
 <footer><span>© Los Santos Government</span><a id="v">Version 3.2.1</a></footer>
-<div id="gate"><div><input id="code" type="password" placeholder="Zugangscode" autocomplete="off"><button id="go">OK</button></div></div>
+<div id="gate"><div><input id="code" type="password" placeholder="Zugangscode" autocomplete="off"><button id="go">OK</button><div class="gate-error" id="gate-error"></div></div></div>
 <div id="namegate"><div class="ng-card"><div class="ng-kicker">LOS SANTOS · COMMAND NETWORK</div><h2>Identität bestätigen</h2><p>Bitte gib deinen vollständigen Namen für Anwesenheitsanzeige und Änderungsprotokoll ein.</p><input id="full-name" maxlength="60" autocomplete="name" placeholder="Vor- und Nachname"><div class="ng-error" id="name-error"></div><button id="name-submit">Verbindung herstellen</button></div></div>
+<div id="emergency-admin"><div class="ng-card"><div class="ng-kicker">LOS SANTOS · ADMINISTRATOR AUTHORITY</div><h2 id="emergency-title">Emergency clear</h2><p id="emergency-description">Admin-Anmeldung erforderlich. Zugangsdaten werden nicht gespeichert.</p><input id="admin-email" type="email" autocomplete="username" placeholder="Firebase-Admin-E-Mail"><input id="admin-password" type="password" autocomplete="current-password" placeholder="Firebase-Admin-Passwort"><input id="admin-command" type="text" autocomplete="off" placeholder="Befehl exakt eingeben"><div class="ng-error" id="emergency-error"></div><button id="emergency-submit">Administrator prüfen</button><button id="emergency-cancel" class="secondary">Abbrechen</button></div></div>
+<div id="emergency-404"><div class="ng-card"><div class="ng-kicker">LOS SANTOS GOVERNMENT · ACCESS CONTROL</div><div class="error-code">404</div><div class="error-rule"></div><h2>Verbindung nicht verfügbar</h2><p>Der angeforderte Kommandozugriff ist derzeit nicht verfügbar.</p><div class="ng-kicker">ERROR · COMMAND ACCESS TERMINATED</div><button id="emergency-recovery" class="secondary">Administrator-Wiederherstellung</button></div></div>
 <div id="alarm"></div><button id="pexit">Präsentation beenden</button>
 <div id="boot"></div>
 
@@ -219,6 +234,9 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 // Firebase Realtime Database URL ohne Slash am Ende, z.B. 'https://MEIN-PROJEKT-default-rtdb.europe-west1.firebasedatabase.app'
 // Leer = Speicherung nur im eigenen Browser.
 const DB_URL = 'https://govseite-default-rtdb.europe-west1.firebasedatabase.app';
+// Firebase Web API key (not a password) and UID of the Firebase admin account.
+const FIREBASE_API_KEY = 'SET_FIREBASE_WEB_API_KEY';
+const EMERGENCY_ADMIN_UID = 'SET_FIREBASE_ADMIN_UID';
 // Position der Insel in den Bildern (Anteil 0-1). Zum Nachjustieren des Luftbilds anpassen.
 const K = {x0:.192,x1:.79,y0:.076,y1:.961};   // karte.jpg
 const S = {x0:.126,x1:.937,y0:.046,y1:.96};   // satellit.jpg
@@ -278,7 +296,9 @@ const db = {
   async all(k){ if(!DB) return JSON.parse(localStorage.getItem(`ls_${activeMap}_${k}`)||'{}'); const r=await fetch(dbPath(k)); if(!r.ok) throw 0; return (await r.json())||{}; },
   async put(k,id,o){ if(!DB){ const a=await this.all(k); a[id]=o; localStorage.setItem(`ls_${activeMap}_${k}`,JSON.stringify(a)); return; } const r=await fetch(dbPath(k,id),{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; },
   async del(k,id){ if(!DB){ const a=await this.all(k); delete a[id]; localStorage.setItem(`ls_${activeMap}_${k}`,JSON.stringify(a)); return; } const r=await fetch(dbPath(k,id),{method:'DELETE'}); if(!r.ok) throw 0; },
-  async putAll(k,o){ if(!DB){ localStorage.setItem(`ls_${activeMap}_${k}`,JSON.stringify(o)); return; } const r=await fetch(dbPath(k),{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; }
+  async putAll(k,o){ if(!DB){ localStorage.setItem(`ls_${activeMap}_${k}`,JSON.stringify(o)); return; } const r=await fetch(dbPath(k),{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; },
+  async emergency(){if(!DB)return JSON.parse(localStorage.getItem('ls_emergency')||'{}');const r=await fetch(`${DB}/emergency.json`);if(!r.ok)throw new Error('Notabschaltungsstatus konnte nicht geprüft werden.');return(await r.json())||{};},
+  async setEmergency(value,idToken){if(!DB)throw new Error('Globale Notabschaltung benötigt Firebase.');const r=await fetch(`${DB}/emergency.json?auth=${encodeURIComponent(idToken)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(value)});if(!r.ok)throw new Error(r.status===401||r.status===403?'Firebase hat die Admin-Änderung abgelehnt. Datenbankregeln und Admin-UID prüfen.':'Notabschaltung konnte nicht gespeichert werden.');}
 };
 const STATUS={a:'Aktiv',b:'Im Bau',z:'Zerstört'}, RAD=['silo','radar','aa'], COLORS=['#8fe3a8','#ff5a4d','#6fa8dc','#f0b24a','#ffffff'];
 const KINDS={line:'Linie',zone:'Zone',arrow:'Pfeil',route:'Route',text:'Text',link:'Verbindung'}, DRAW=['line','zone','arrow','route'];
@@ -498,7 +518,7 @@ function boot(done){
   let i=0; const t=setInterval(()=>{ if(i<lines.length){ b.textContent+=lines[i++]+'\n'; } else { clearInterval(t); b.style.opacity=0; setTimeout(()=>{ b.style.display='none'; done(); },500); } },
     matchMedia('(prefers-reduced-motion:reduce)').matches?10:450);
 }
-let pendingRole=null, presenceTimer=null, presenceId=newId(), gridLayer=L.layerGroup(), undoStack=[], lastSavedSnapshot=null, audioCtx=null, soundsOn=localStorage.getItem('ls_sounds')!=='off';
+let pendingRole=null, presenceTimer=null, presenceId=newId(), gridLayer=L.layerGroup(), undoStack=[], lastSavedSnapshot=null, audioCtx=null, soundsOn=localStorage.getItem('ls_sounds')!=='off', emergencyAction=null, emergencyBlocked=false, emergencyWatchTimer=null;
 function copyState(){ return JSON.parse(JSON.stringify({markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{}})); }
 function stateEqual(a,b){ return JSON.stringify(a)===JSON.stringify(b); }
 function playTone(kind='click'){
@@ -519,16 +539,64 @@ document.addEventListener('click',e=>{ if(e.target.closest('button,a')) playTone
 map.on('click',()=>{ if(cmd()) playTone('tap'); });
 $('#name-submit').onclick=submitName;
 $('#full-name').onkeydown=e=>{ if(e.key==='Enter') submitName(); };
+$('#emergency-submit').onclick=submitEmergencyCommand;
+$('#emergency-cancel').onclick=()=>{$('#emergency-admin').style.display='none';$('#admin-password').value='';};
+$('#emergency-recovery').onclick=()=>openEmergencyAdmin('Emergency-restore');
 function submitName(){
   const field=$('#full-name'), name=field.value.trim().replace(/\s+/g,' ');
   if(name.split(' ').filter(Boolean).length<2){ $('#name-error').textContent='Bitte Vor- und Nachnamen eingeben.'; field.focus(); return; }
   user=name.slice(0,60); localStorage.setItem('ls_user',user); $('#namegate').style.display='none'; playTone('login'); enter(true,pendingRole); pendingRole=null;
 }
 function tryCode(){
-  const i=$('#code'), role=CODES[i.value.trim().toUpperCase()];
+  const i=$('#code'),value=i.value.trim(),command=value.toLowerCase();
+  if(command==='emergency-clear'||command==='emergency-restore'){
+    emergencyAction=command==='emergency-clear'?'Emergency-clear':'Emergency-restore';
+    $('#gate').style.display='none';i.value='';openEmergencyAdmin(emergencyAction);return;
+  }
+  const role=CODES[value.toUpperCase()];
   if(!role){ i.classList.add('bad'); i.value=''; setTimeout(()=>i.classList.remove('bad'),600); return; }
-  pendingRole=role; $('#gate').style.display='none'; $('#name-error').textContent='';
-  $('#full-name').value=localStorage.getItem('ls_user')||''; $('#namegate').style.display='grid'; setTimeout(()=>$('#full-name').focus(),0);
+  pendingRole=role;
+  db.emergency().then(state=>{
+    if(state.active){$('#gate').style.display='none';showEmergency404();return;}
+    $('#gate').style.display='none';$('#gate-error').textContent='';$('#name-error').textContent='';
+    $('#full-name').value=localStorage.getItem('ls_user')||'';$('#namegate').style.display='grid';setTimeout(()=>$('#full-name').focus(),0);
+  }).catch(e=>{$('#gate-error').textContent='Kommandozugriff konnte nicht sicher geprüft werden. Verbindung prüfen.';console.error(e);});
+}
+function openEmergencyAdmin(action){
+  emergencyAction=action;
+  $('#emergency-title').textContent=action==='Emergency-clear'?'Emergency clear':'Emergency restore';
+  $('#emergency-description').textContent=action==='Emergency-clear'?'Admin-Anmeldung erforderlich. Danach werden alle Kommando-Sitzungen gesperrt.':'Admin-Anmeldung erforderlich, um die globale Sperre aufzuheben.';
+  $('#admin-command').value='';$('#admin-password').value='';$('#emergency-error').textContent='';
+  $('#emergency-admin').style.display='grid';$('#admin-email').focus();
+}
+async function submitEmergencyCommand(){
+  const command=$('#admin-command').value.trim(),expected=emergencyAction;
+  if(!expected||command!==expected){$('#emergency-error').textContent=`Befehl exakt eingeben: ${expected||'Emergency-clear'}`;return;}
+  if(!DB||FIREBASE_API_KEY.startsWith('SET_')||EMERGENCY_ADMIN_UID.startsWith('SET_')){
+    $('#emergency-error').textContent='Firebase Web API Key und Admin-UID müssen zuerst in der Konfiguration gesetzt und die Realtime-Database-Regeln geschützt werden.';return;
+  }
+  const email=$('#admin-email').value.trim(),password=$('#admin-password').value;
+  if(!email||!password){$('#emergency-error').textContent='Admin-E-Mail und Passwort sind erforderlich.';return;}
+  const submit=$('#emergency-submit');submit.disabled=true;
+  try{
+    const response=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(FIREBASE_API_KEY)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,returnSecureToken:true})});
+    const auth=await response.json();
+    if(!response.ok||!auth.idToken)throw new Error('Firebase-Admin-Anmeldung fehlgeschlagen. Zugangsdaten und Authentication-Einstellungen prüfen.');
+    if(auth.localId!==EMERGENCY_ADMIN_UID)throw new Error('Dieses Firebase-Konto besitzt nicht die konfigurierte Admin-Berechtigung.');
+    await db.setEmergency({active:expected==='Emergency-clear',command:expected,updatedAt:Date.now(),by:email},auth.idToken);
+    $('#emergency-admin').style.display='none';$('#admin-password').value='';
+    if(expected==='Emergency-clear')showEmergency404();
+    else{$('#emergency-404').style.display='none';emergencyBlocked=false;$('#gate-error').textContent='Notabschaltung aufgehoben. Bitte erneut anmelden.';$('#gate').style.display='grid';}
+  }catch(e){$('#emergency-error').textContent=e.message||'Notabschaltung konnte nicht ausgeführt werden.';console.error('Notabschaltung fehlgeschlagen.',e);}
+  finally{submit.disabled=false;}
+}
+function showEmergency404(){
+  if(emergencyBlocked)return;
+  emergencyBlocked=true;sessionStorage.removeItem('ls');clearInterval(timer);clearInterval(clock);clearInterval(presenceTimer);presenceTimer=null;
+  tool=null;resetTemp();document.body.classList.remove('cmd','pres','tooling');edit=false;
+  if(map.hasLayer(group))map.removeLayer(group);group.clearLayers();if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);
+  $('#namegate').style.display='none';$('#gate').style.display='none';$('#emergency-404').style.display='grid';map.invalidateSize();
+  emergencyWatchTimer=setInterval(async()=>{try{const state=await db.emergency();if(!state.active){clearInterval(emergencyWatchTimer);emergencyWatchTimer=null;emergencyBlocked=false;$('#emergency-404').style.display='none';$('#gate').style.display='grid';$('#gate-error').textContent='Notabschaltung aufgehoben. Bitte erneut anmelden.';}}catch(e){console.warn('Notabschaltungsstatus wird erneut geprüft.',e);}},5000);
 }
 function boot(done){
   const b=$('#boot'), reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -639,6 +707,8 @@ async function sync(){
   if(busy) return;
   const generation=mapGeneration;
   try{
+    const emergency=await db.emergency();
+    if(emergency.active){showEmergency404();return;}
     const ks=['markers','shapes','meta','log','presence'], r=await Promise.all(ks.map(k=>db.all(k))), n={};
     if(generation!==mapGeneration)return;
     ks.forEach((k,i)=>n[k]=r[i]); setSt(true);
@@ -833,7 +903,7 @@ async function importJson(e){
 }
 function setDef(v){ data.meta.defcon={v}; applyDef(); write(()=>db.put('meta','defcon',{v})); logit('DEFCON '+v+' gesetzt'); playTone('alarm'); }
 const _r=sessionStorage.getItem('ls');
-if(_r){ user=localStorage.getItem('ls_user')||'Unbekannt'; enter(false,_r==='edit'?'edit':'view'); }
+if(_r){user=localStorage.getItem('ls_user')||'Unbekannt';db.emergency().then(state=>{if(state.active)showEmergency404();else enter(false,_r==='edit'?'edit':'view');}).catch(e=>{sessionStorage.removeItem('ls');$('#gate-error').textContent='Kommandozugriff konnte nicht sicher geprüft werden. Verbindung prüfen.';$('#gate').style.display='grid';console.error(e);});}
 </script>
 </body>
 </html>
