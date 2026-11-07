@@ -77,7 +77,6 @@ body.cmd{background:#050505;color:#d6d6d6}
 <body>
 <header>
   <div class="brand"><span class="seal" id="seal">LS</span><div><b id="bt">Los Santos Government</b><small id="bs">Amt für Stadtplanung und Geoinformation</small></div></div>
-  <nav><a href="#">Stadtplan</a><a href="#">Dienste</a><a href="#">Kontakt</a></nav>
   <div id="clk"></div>
 </header>
 <main>
@@ -98,8 +97,7 @@ body.cmd{background:#050505;color:#d6d6d6}
 const CODE = 'DOD';
 // Firebase Realtime Database URL ohne Slash am Ende, z.B. 'https://MEIN-PROJEKT-default-rtdb.europe-west1.firebasedatabase.app'
 // Leer = Speicherung nur im eigenen Browser.
-const DB_URL = '
-https://govseite-default-rtdb.europe-west1.firebasedatabase.app/';
+const DB_URL = 'https://govseite-default-rtdb.europe-west1.firebasedatabase.app';
 // Position der Insel in den Bildern (Anteil 0-1). Zum Nachjustieren des Luftbilds anpassen.
 const K = {x0:.192,x1:.79,y0:.076,y1:.961};   // karte.jpg
 const S = {x0:.126,x1:.937,y0:.046,y1:.96};   // satellit.jpg
