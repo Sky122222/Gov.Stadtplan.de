@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Los Santos Government – Stadtplan</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f3f2;--ink:#111;--mut:#6b6b6b;--line:#d9d9d7;--acc:#8fe3a8}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;font:15px/1.5 'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 20px;background:#fff;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.seal{width:40px;height:40px;display:grid;place-items:center;background:#111;color:#fff;font-weight:600;font-size:15px;border-radius:50%}
+.brand b{display:block;font-size:17px;line-height:1.2}
+.brand small{color:var(--mut);font-size:12.5px}
+nav{display:flex;gap:22px;font-size:14px}
+nav a{color:var(--mut);text-decoration:none}
+nav a:first-child{color:var(--ink);border-bottom:2px solid var(--ink)}
+#clk{display:none;font:600 20px 'Barlow Condensed',sans-serif;letter-spacing:.08em}
+main{flex:1;display:flex;min-height:0}
+#mapwrap{position:relative;flex:1;min-width:0}
+#map{position:absolute;inset:0;background:#0fa8d6;outline:0}
+#layers{position:absolute;top:12px;left:56px;z-index:900;display:flex;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+#layers button{border:0;background:none;padding:8px 14px;font:inherit;font-size:13.5px;cursor:pointer;color:var(--mut)}
+#layers button.on{background:#111;color:#fff}
+#xy{display:none;position:absolute;left:12px;bottom:12px;z-index:900;font:500 14px 'Barlow Condensed',sans-serif;letter-spacing:.08em;color:var(--acc);background:rgba(0,0,0,.7);padding:3px 10px}
+aside{display:none;width:300px;background:#0b0b0b;color:#d6d6d6;border-left:1px solid #2a2a2a;padding:16px;overflow:auto}
+aside h3{margin:18px 0 8px;font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#fff}
+aside h3:first-child{margin-top:0}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tools button,.pp button,#out{font:inherit;font-size:13px;background:#161616;color:#d6d6d6;border:1px solid #333;padding:7px 8px;cursor:pointer;text-align:left}
+.tools button:hover,.pp button:hover,#out:hover{border-color:#777}
+.tools button.on{border-color:var(--acc);color:var(--acc)}
+#list{display:flex;flex-direction:column;gap:2px}
+#list a{display:flex;justify-content:space-between;gap:8px;padding:5px 8px;font-size:13px;cursor:pointer;border-left:2px solid #333}
+#list a:hover{background:#181818}
+#list span{color:#777}
+#stat{font-size:12.5px;color:#888}
+#stat.ok{color:var(--acc)}
+#out{margin-top:18px;width:100%;text-align:center}
+footer{display:flex;justify-content:space-between;padding:8px 20px;font-size:12.5px;color:#aaa;background:#1b1b1b}
+footer a{color:#aaa;cursor:default}
+/* Kommandomodus */
+body.cmd{background:#050505;color:#d6d6d6}
+.cmd header{background:#0b0b0b;border-color:#2a2a2a}
+.cmd .seal{background:none;border:1px solid var(--acc);color:var(--acc);border-radius:2px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em}
+.cmd .brand b{font:600 20px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#fff}
+.cmd .brand small{color:#777}
+.cmd nav{display:none}
+.cmd #clk,.cmd aside,.cmd #xy{display:block}
+.cmd #layers{border-color:#333;background:#0b0b0b}
+.cmd #layers button{color:#999}
+.cmd #layers button.on{background:#222;color:var(--acc)}
+.cmd .leaflet-image-layer{filter:grayscale(1) brightness(.55) contrast(1.3)}
+.cmd #map{background:#050a0d}
+.cmd #mapwrap::after{content:'';position:absolute;inset:0;z-index:600;pointer-events:none;background:linear-gradient(rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,rgba(143,227,168,.06) 1px,transparent 1px) 0 0/56px 56px,radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7))}
+.cmd footer{background:#0b0b0b;color:#555}
+.mk{width:28px;height:28px;display:grid;place-items:center;background:#0b0b0b;border:2px solid var(--c);color:var(--c);font:600 12px 'Barlow Condensed',sans-serif;box-shadow:0 0 12px var(--c);transform:rotate(45deg)}
+.mk i{font-style:normal;transform:rotate(-45deg)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0b0b0b;color:#d6d6d6;border:1px solid #333;border-radius:0}
+.pp{display:flex;flex-direction:column;gap:6px;min-width:170px}
+.pp b{font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}
+.pp input{background:#161616;border:1px solid #333;color:#fff;padding:6px;font:inherit}
+#boot{position:fixed;inset:0;z-index:5000;background:#000;color:var(--acc);font:500 17px 'Barlow Condensed',sans-serif;letter-spacing:.1em;padding:12vh 8vw;display:none;white-space:pre-line;transition:opacity .5s}
+#gate{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.55);display:none;place-items:center}
+#gate div{background:#fff;padding:20px;border-radius:6px;display:flex;gap:8px}
+#gate input{font:inherit;padding:8px;border:1px solid var(--line);border-radius:4px;width:180px}
+#gate input.bad{border-color:#c33}
+#gate button{font:inherit;background:#111;color:#fff;border:0;border-radius:4px;padding:8px 14px;cursor:pointer}
+@media(max-width:800px){main{flex-direction:column}aside{width:auto;max-height:42vh;border-left:0;border-top:1px solid #2a2a2a}nav{display:none}}
+@media(prefers-reduced-motion:reduce){#boot{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="seal" id="seal">LS</span><div><b id="bt">Los Santos Government</b><small id="bs">Amt für Stadtplanung und Geoinformation</small></div></div>
+  <nav><a href="#">Stadtplan</a><a href="#">Dienste</a><a href="#">Kontakt</a></nav>
+  <div id="clk"></div>
+</header>
+<main>
+  <div id="mapwrap">
+    <div id="map" tabindex="-1"></div>
+    <div id="layers"><button data-l="karte" class="on">Stadtplan</button><button data-l="sat">Luftbild</button></div>
+    <div id="xy"></div>
+  </div>
+  <aside id="side"></aside>
+</main>
+<footer><span>© Los Santos Government</span><a id="v">Version 3.2.1</a></footer>
+<div id="gate"><div><input id="code" type="password" placeholder="Zugangscode" autocomplete="off"><button id="go">OK</button></div></div>
+<div id="boot"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ===== KONFIGURATION ===== */
+const CODE = 'DOD';
+// Firebase Realtime Database URL ohne Slash am Ende, z.B. 'https://MEIN-PROJEKT-default-rtdb.europe-west1.firebasedatabase.app'
+// Leer = Speicherung nur im eigenen Browser.
+const DB_URL = '
+https://govseite-default-rtdb.europe-west1.firebasedatabase.app/';
+// Position der Insel in den Bildern (Anteil 0-1). Zum Nachjustieren des Luftbilds anpassen.
+const K = {x0:.192,x1:.79,y0:.076,y1:.961};   // karte.jpg
+const S = {x0:.126,x1:.937,y0:.046,y1:.96};   // satellit.jpg
+/* ========================= */
+
+const TYPES = {
+  silo:['Raketensilo','R','#ff5a4d'], base:['Armeestützpunkt','B','#e8e8e8'], aa:['Flugabwehr','F','#f0b24a'],
+  radar:['Radarstation','Ra','#8fe3a8'], air:['Luftwaffenbasis','L','#9ac7ff'], navy:['Marinestützpunkt','M','#6fa8dc'], hq:['Hauptquartier','HQ','#ffffff']
+};
+const $ = s => document.querySelector(s);
+const map = L.map('map',{crs:L.CRS.Simple,minZoom:-1.5,maxZoom:3,zoomSnap:.25,attributionControl:false,maxBounds:[[-150,-150],[1150,1150]],maxBoundsViscosity:.8});
+const KB = [[0,0],[1000,1000]];
+const sx=(K.x1-K.x0)/(S.x1-S.x0), sy=(K.y1-K.y0)/(S.y1-S.y0);
+const bx0=K.x0-S.x0*sx, by0=K.y0-S.y0*sy;
+const SB = [[1000*(1-(by0+sy)),1000*bx0],[1000*(1-by0),1000*(bx0+sx)]];
+const imgs = {karte:L.imageOverlay('karte.jpg',KB), sat:L.imageOverlay('satellit.jpg',SB)};
+let cur=null;
+function setLayer(n){
+  if(cur) map.removeLayer(imgs[cur]);
+  cur=n; imgs[n].addTo(map);
+  $('#map').style.background = n==='sat' ? '#0a1030' : '#0fa8d6';
+  document.querySelectorAll('#layers button').forEach(b=>b.classList.toggle('on',b.dataset.l===n));
+}
+document.querySelectorAll('#layers button').forEach(b=>b.onclick=()=>setLayer(b.dataset.l));
+map.fitBounds(KB); setLayer('karte');
+
+/* ---- Zugang ---- */
+$('#v').onclick = () => { $('#gate').style.display='grid'; $('#code').value=''; $('#code').focus(); };
+$('#gate').onclick = e => { if(e.target.id==='gate') $('#gate').style.display='none'; };
+function tryCode(){
+  const i=$('#code');
+  if(i.value.trim().toUpperCase()===CODE){ $('#gate').style.display='none'; enter(true); }
+  else { i.classList.add('bad'); i.value=''; setTimeout(()=>i.classList.remove('bad'),600); }
+}
+$('#go').onclick=tryCode; $('#code').onkeydown=e=>{ if(e.key==='Enter') tryCode(); };
+
+/* ---- Datenhaltung ---- */
+const DB = DB_URL.replace(/\/$/,'');
+const db = {
+  async all(){ if(!DB) return JSON.parse(localStorage.getItem('ls_m')||'{}'); const r=await fetch(DB+'/markers.json'); if(!r.ok) throw 0; return (await r.json())||{}; },
+  async put(id,o){ if(!DB){ const a=await this.all(); a[id]=o; localStorage.setItem('ls_m',JSON.stringify(a)); return; } const r=await fetch(`${DB}/markers/${id}.json`,{method:'PUT',body:JSON.stringify(o)}); if(!r.ok) throw 0; },
+  async del(id){ if(!DB){ const a=await this.all(); delete a[id]; localStorage.setItem('ls_m',JSON.stringify(a)); return; } const r=await fetch(`${DB}/markers/${id}.json`,{method:'DELETE'}); if(!r.ok) throw 0; }
+};
+let data={}, mk={}, tool=null, busy=0, timer=null, clock=null;
+const group = L.layerGroup();
+
+function icon(t){ const [,c,col]=TYPES[t]; return L.divIcon({className:'',html:`<div class="mk" style="--c:${col}"><i>${c}</i></div>`,iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-16]}); }
+function el(tag,txt){ const e=document.createElement(tag); if(txt!=null) e.textContent=txt; return e; }
+function pop(id){
+  const o=data[id], d=el('div'); d.className='pp';
+  const i=el('input'); i.value=o.n; i.maxLength=60;
+  const save=el('button','Speichern'), del=el('button','Löschen');
+  save.onclick=async()=>{ o.n=i.value.trim()||TYPES[o.t][0]; await write(()=>db.put(id,o)); map.closePopup(); redraw(); };
+  del.onclick=async()=>{ delete data[id]; await write(()=>db.del(id)); map.closePopup(); redraw(); };
+  d.append(el('b',TYPES[o.t][0]),i,save,del); return d;
+}
+async function write(fn){ busy=1; try{ await fn(); status(true); }catch(e){ status(false); } busy=0; }
+function redraw(){
+  group.clearLayers(); mk={};
+  for(const [id,o] of Object.entries(data)){
+    if(!TYPES[o.t]) continue;
+    const m=L.marker([1000*(1-o.y),1000*o.x],{icon:icon(o.t),title:o.n}).bindPopup(()=>pop(id));
+    m.addTo(group); mk[id]=m;
+  }
+  renderList();
+}
+function renderList(){
+  const l=$('#list'); if(!l) return; l.replaceChildren();
+  const ids=Object.keys(data).filter(i=>TYPES[data[i].t]).sort((a,b)=>data[a].t.localeCompare(data[b].t));
+  if(!ids.length){ l.append(el('div','Noch keine Einträge. Werkzeug wählen und auf die Karte klicken.')); l.firstChild.style.cssText='font-size:13px;color:#777'; }
+  ids.forEach(id=>{ const a=el('a'); a.style.borderColor=TYPES[data[id].t][2]; a.append(el('div',data[id].n),el('span',TYPES[data[id].t][1]));
+    a.onclick=()=>{ map.flyTo(mk[id].getLatLng(),1.5); mk[id].openPopup(); }; l.append(a); });
+  $('#cnt').textContent=ids.length;
+}
+function status(ok){ const s=$('#stat'); if(!s) return; s.className=ok?'ok':''; s.textContent=ok?(DB?'Verbunden, Daten werden geteilt':'Lokaler Modus, nur dieser Browser'):'Keine Verbindung zur Datenbank'; }
+async function sync(){
+  if(busy) return;
+  try{ const d=await db.all(); status(true); if(JSON.stringify(d)!==JSON.stringify(data) && !map._popup){ data=d; redraw(); } }
+  catch(e){ status(false); }
+}
+map.on('click',async e=>{
+  if(!document.body.classList.contains('cmd')||!tool) return;
+  const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const o={t:tool,n:TYPES[tool][0],x:e.latlng.lng/1000,y:1-e.latlng.lat/1000};
+  data[id]=o; redraw(); mk[id].openPopup(); await write(()=>db.put(id,o));
+});
+map.on('mousemove',e=>{ $('#xy').textContent=`X ${Math.round(e.latlng.lng)}  Y ${Math.round(1000-e.latlng.lat)}`; });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&tool){ tool=null; document.querySelectorAll('.tools button').forEach(b=>b.classList.remove('on')); } });
+
+/* ---- Moduswechsel ---- */
+function buildSide(){
+  const s=$('#side'); s.replaceChildren();
+  const t=el('div'); t.className='tools';
+  for(const [k,v] of Object.entries(TYPES)){ const b=el('button',v[0]); b.style.borderLeft=`3px solid ${v[2]}`;
+    b.onclick=()=>{ tool=tool===k?null:k; t.querySelectorAll('button').forEach(x=>x.classList.remove('on')); if(tool) b.classList.add('on'); }; t.append(b); }
+  const l=el('div'); l.id='list';
+  const st=el('div'); st.id='stat';
+  const h3=el('h3','Einträge ('); const c=el('span'); c.id='cnt'; c.style.color='#fff'; h3.append(c,')');
+  const out=el('button','Abmelden'); out.id='out'; out.onclick=leave;
+  s.append(el('h3','Werkzeuge'),t,h3,l,el('h3','Status'),st,out);
+}
+function boot(done){
+  const b=$('#boot'); b.style.display='block'; b.style.opacity=1; b.textContent='';
+  const lines=['AUTHENTIFIZIERUNG ........ OK','ZUGANGSEBENE ............. FREIGEGEBEN','VERBINDUNG ZUM KOMMANDONETZ ... OK','LADE LAGEBILD ...'];
+  let i=0; const t=setInterval(()=>{ if(i<lines.length){ b.textContent+=lines[i++]+'\n'; } else { clearInterval(t); b.style.opacity=0; setTimeout(()=>{ b.style.display='none'; done(); },500); } },
+    matchMedia('(prefers-reduced-motion:reduce)').matches?10:450);
+}
+function enter(anim){
+  const go=()=>{
+    sessionStorage.setItem('ls','1'); document.body.classList.add('cmd');
+    $('#seal').textContent='DOD'; $('#bt').textContent='Joint Defense Command'; $('#bs').textContent='Strategische Lageübersicht';
+    buildSide(); group.addTo(map); map.invalidateSize(); map.fitBounds(KB); sync(); timer=setInterval(sync,5000);
+    const tick=()=>$('#clk').textContent=new Date().toLocaleTimeString('de-DE'); tick(); clock=setInterval(tick,1000);
+  };
+  anim?boot(go):go();
+}
+function leave(){
+  sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null;
+  map.removeLayer(group); group.clearLayers(); data={};
+  document.body.classList.remove('cmd');
+  $('#seal').textContent='LS'; $('#bt').textContent='Los Santos Government'; $('#bs').textContent='Amt für Stadtplanung und Geoinformation';
+  map.invalidateSize();
+}
+if(sessionStorage.getItem('ls')) enter(false);
+</script>
+</body>
+</html>
