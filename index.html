@@ -97,6 +97,10 @@ aside h3:first-child{margin-top:0}
 .rocket-panel button{font:500 12px 'Barlow Condensed',sans-serif;letter-spacing:.04em}
 .rocket-panel .rocket-launch-btn{background:#272014;border-color:#8f6c2c;color:#ffe0a0}
 .rocket-panel .rocket-secondary-btn{background:#161c1e;color:#b9c1c3}
+.shape-draft{min-width:min(220px,calc(100vw - 96px))}
+.shape-draft input,.shape-draft textarea{width:100%;box-sizing:border-box}
+.shape-draft .shape-draft-save{background:#1b2a20;color:#d9f3df;border-color:#52765c}
+.shape-draft .shape-draft-cancel{background:#201819;color:#e5c4c4;border-color:#674747}
 .tools button,.pp button,#out{font:inherit;font-size:13px;background:#161616;color:#d6d6d6;border:1px solid #333;padding:7px 8px;cursor:pointer;text-align:left}
 .tools button:hover,.pp button:hover,#out:hover{border-color:#777}
 .tools button.on{border-color:var(--acc);color:var(--acc)}
@@ -437,7 +441,8 @@ const EMPTY=()=>({markers:{},shapes:{},meta:{},log:{},launches:{}});
 let data=EMPTY(), mk={}, sh={}, tool=null, col=COLORS[0], pts=[], mpts=[], tmp=null, mline=null, mlab=null, btns={}, hidden=new Set(), busy=0, popOpen=0, timer=null, clock=null, edit=false, user='Unbekannt', linkA=null, lastEsc=0;
 const group=L.layerGroup(), markerLayer=L.layerGroup(), cmd=()=>document.body.classList.contains('cmd');
 const launchLayer=L.layerGroup(),launchPreviewLayer=L.layerGroup();
-let clusterFocus=null, sidebarWidth=310, movementTimer=null, launchSyncTimer=null, launchExpiryTimer=null, movementDraft=null, launchTargetDraft=null, launchAnimationLayers={};
+const shapeDraftLayer=L.layerGroup();
+let clusterFocus=null, sidebarWidth=310, movementTimer=null, launchSyncTimer=null, launchExpiryTimer=null, movementDraft=null, launchTargetDraft=null, launchAnimationLayers={}, shapeDraft=null, movementRouteDraft=null;
 const fmt=u=>M_PER_UNIT?((u*=M_PER_UNIT)>=1000?(u/1000).toFixed(1)+' km':Math.round(u)+' m'):Math.round(u)+' E';
 const pt=(x,y)=>[1000*(1-y),1000*x];
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -564,17 +569,16 @@ async function saveMovementRoute(id,path,name='Eigene Route'){
   await saveMovement(id,mv,`${TYPES[o.t][0]}: Route festgelegt`);
 }
 function beginMovementDrawing(id){
-  if(!edit||!data.markers[id])return;
+  if(!edit||shapeDraft||movementRouteDraft||!data.markers[id])return;
   const position=markerPosition(data.markers[id]);
   resetTemp();movementDraft=id;tool=`moveRoute:${id}`;pts.push([position.x,position.y]);preview();sel();
-  const note=$('#movement-instructions');note.textContent='ROUTE ZEICHNEN · Wegpunkte anklicken · Enter oder Doppelklick beendet · Esc bricht ab';note.classList.add('on');
+  const note=$('#movement-instructions');note.textContent='ROUTE ZEICHNEN · Wegpunkte anklicken · Enter oder Doppelklick beendet · danach speichern';note.classList.add('on');
   map.closePopup();
 }
 async function finishMovementDrawing(){
   const id=movementDraft;
   if(!id||pts.length<2)return;
-  const path=pts.map(p=>p.slice());resetTemp();tool=null;sel();
-  await saveMovementRoute(id,path,'Gezeichnete Route');
+  const path=pts.map(p=>p.slice());resetTemp();tool=null;sel();stageMovementRoute(id,path);
 }
 async function changeMovementSpeed(id,value){
   if(!edit)return;
@@ -889,7 +893,12 @@ function redraw(){
   renderList(); renderLog(); applyDef();
 }
 map.on('zoomend',()=>{if(cmd())renderMarkers();});
-function mkLink(a,b){ const id=newId(), o={k:'link',c:col,n:'Verbindung',a,b}; data.shapes[id]=o; redraw(); write(()=>db.put('shapes',id,o)); logit('Verbindung gesetzt'); }
+function mkLink(a,b){
+  if(shapeDraft)return;
+  const first=data.markers[a],second=data.markers[b];
+  if(!first||!second)return;
+  stageShape({k:'link',c:col,n:'Verbindung',a,b},[(+first.x+ +second.x)/2,(+first.y+ +second.y)/2]);
+}
 function renderList(){
   const l=$('#list'); if(!l) return; l.replaceChildren(); const rows=[];
   for(const [id,o] of Object.entries(data.markers)){if(!TYPES[o.t]||hidden.has(o.t))continue;const status=o.s||'a',moving=MOBILE_TYPES.has(o.t)&&o.mv&&Array.isArray(o.mv.path)&&o.mv.state==='moving'&&movementProgress(o.mv)<pathLength(o.mv.path)-.1;rows.push([o.t,o.n,TYPES[o.t][1]+(status!=='a'?' · '+STATUS[status]:'')+(moving?' · Unterwegs':''),TYPES[o.t][2],()=>{if(mk[id]&&markerLayer.hasLayer(mk[id])){map.flyTo(mk[id].getLatLng(),Math.max(1.5,map.getZoom()));openMarkerPopup(id);}else focusMarker(id);},STATUS_COLOR[status]]);}
@@ -919,7 +928,86 @@ async function sync(){
 }
 function resetTemp(){ pts=[];mpts=[];linkA=null;movementDraft=null;launchTargetDraft=null;launchPreviewLayer.clearLayers();const note=$('#movement-instructions');if(note)note.classList.remove('on');[tmp,mline,mlab].forEach(l=>l&&map.removeLayer(l));tmp=mline=mlab=null; }
 function sel(){ for(const k in btns) btns[k].classList.toggle('on',k===tool); document.body.classList.toggle('tooling',!!tool); }
-function setTool(k){ if(!edit&&k&&k!=='measure') return; tool=k===tool?null:k; resetTemp(); sel(); }
+function setTool(k){ if(shapeDraft||movementRouteDraft||!edit&&k&&k!=='measure') return; tool=k===tool?null:k; resetTemp(); sel(); }
+function stageShape(shape,anchor){
+  if(!edit||shapeDraft||movementRouteDraft)return;
+  const id=newId(),draft={id,shape:{...shape},anchor,popup:null,layer:null,saving:false};
+  const points=shape.k==='link'?[data.markers[shape.a],data.markers[shape.b]].map(marker=>pt(+marker.x,+marker.y)):shape.p&&shape.p.map(point=>pt(+point[0],+point[1]));
+  if(shape.k==='text'){
+    const label=el('div',shape.n||'Text');label.className='tx';label.style.color=shape.c;
+    draft.layer=L.marker(pt(+anchor[0],+anchor[1]),{icon:L.divIcon({className:'',html:label,iconSize:[0,0]}),interactive:false}).addTo(shapeDraftLayer);
+  }else if(shape.k==='zone')draft.layer=L.polygon(points,{color:shape.c,weight:2,fillOpacity:.18,dashArray:'5 4',interactive:false}).addTo(shapeDraftLayer);
+  else draft.layer=L.polyline(points,{color:shape.c,weight:shape.k==='route'?4:3,dashArray:'5 4',interactive:false}).addTo(shapeDraftLayer);
+  const content=el('div');content.className='pp pp-marker shape-draft';
+  const title=el('b',`ENTWURF · ${KINDS[shape.k]}`),name=el('input');name.value=shape.n||KINDS[shape.k];name.maxLength=60;name.setAttribute('aria-label','Name der Zeichnung');
+  const note=el('textarea');note.placeholder='Notiz (optional)';note.maxLength=500;note.setAttribute('aria-label','Notiz zur Zeichnung');
+  const saveButton=btn('Zeichnung speichern',()=>saveShapeDraft(draft,name,note,saveButton));saveButton.className='shape-draft-save';
+  const cancelButton=btn('Entwurf verwerfen',()=>cancelShapeDraft(draft));cancelButton.className='shape-draft-cancel';
+  content.append(title,name,note,saveButton,cancelButton);
+  draft.popup=L.popup({...markerPopupOptions(),closeOnClick:false,closeButton:false}).setLatLng(pt(+anchor[0],+anchor[1])).setContent(content);
+  shapeDraft=draft;tool=null;resetTemp();sel();
+  if(!map.hasLayer(shapeDraftLayer))shapeDraftLayer.addTo(map);
+  draft.popup.openOn(map);setTimeout(()=>fitPopupToMap(draft.popup),0);
+  setTimeout(()=>{if(shapeDraft===draft)name.focus();},0);
+}
+async function saveShapeDraft(draft,name,note,button){
+  if(shapeDraft!==draft||draft.saving)return;
+  draft.shape.n=name.value.trim()||KINDS[draft.shape.k];draft.shape.note=note.value.trim();draft.saving=true;button.disabled=true;
+  try{
+    await db.put('shapes',draft.id,draft.shape);
+    const before=copyState();data.shapes[draft.id]=draft.shape;
+    undoStack.push(before);if(undoStack.length>50)undoStack.shift();
+    lastSavedSnapshot=copyState();const undoButton=$('#undo-btn');if(undoButton)undoButton.disabled=false;
+    const message=`${KINDS[draft.shape.k]} „${draft.shape.n}“ gezeichnet`;
+    map.closePopup(draft.popup);shapeDraft=null;shapeDraftLayer.clearLayers();redraw();logit(message);setSt(true);
+  }catch(error){
+    draft.saving=false;button.disabled=false;setSt(false);console.error('Zeichnung konnte nicht gespeichert werden.',error);
+    alert('Zeichnung konnte nicht gespeichert werden. Bitte Verbindung prüfen und erneut versuchen.');
+  }
+}
+function cancelShapeDraft(draft=shapeDraft){
+  if(!draft||shapeDraft!==draft)return;
+  shapeDraft=null;shapeDraftLayer.clearLayers();if(map.hasLayer(shapeDraftLayer))map.removeLayer(shapeDraftLayer);
+  if(draft.popup&&map.hasLayer(draft.popup))map.closePopup(draft.popup);
+}
+function stageMovementRoute(id,path){
+  if(!edit||shapeDraft||movementRouteDraft||!data.markers[id])return;
+  const marker=data.markers[id],anchor=[path.reduce((sum,p)=>sum+p[0],0)/path.length,path.reduce((sum,p)=>sum+p[1],0)/path.length];
+  const draft={id,path:path.map(point=>point.slice()),popup:null,saving:false};
+  L.polyline(draft.path.map(point=>pt(+point[0],+point[1])),{color:'#e1e6e7',weight:4,dashArray:'8 5',interactive:false}).addTo(shapeDraftLayer);
+  const content=el('div');content.className='pp pp-marker shape-draft';
+  const title=el('b','ENTWURF · BEWEGUNGSROUTE'),name=el('input');name.value='Gezeichnete Route';name.maxLength=60;name.setAttribute('aria-label','Name der Route');
+  const speed=el('input');speed.type='number';speed.min=1;speed.max=250;speed.step=1;speed.value=marker.mv&&marker.mv.speed||40;speed.setAttribute('aria-label','Tempo in Karteneinheiten pro Sekunde');
+  const saveButton=btn('Route speichern',()=>saveMovementRouteDraft(draft,name,speed,saveButton));saveButton.className='shape-draft-save';
+  const cancelButton=btn('Entwurf verwerfen',()=>cancelMovementRouteDraft(draft));cancelButton.className='shape-draft-cancel';
+  content.append(title,name,el('small','Tempo · Karteneinheiten pro Sekunde'),speed,saveButton,cancelButton);
+  draft.popup=L.popup({...markerPopupOptions(),closeOnClick:false,closeButton:false}).setLatLng(pt(+anchor[0],+anchor[1])).setContent(content);
+  movementRouteDraft=draft;if(!map.hasLayer(shapeDraftLayer))shapeDraftLayer.addTo(map);
+  draft.popup.openOn(map);setTimeout(()=>fitPopupToMap(draft.popup),0);
+}
+async function saveMovementRouteDraft(draft,name,speedField,button){
+  if(movementRouteDraft!==draft||draft.saving)return;
+  const marker=data.markers[draft.id],speed=Number(speedField.value);
+  if(!marker||!Number.isFinite(speed)||speed<1||speed>250){alert('Tempo muss zwischen 1 und 250 Karteneinheiten pro Sekunde liegen.');return;}
+  const next={...marker,mv:{path:draft.path,speed:Math.round(speed),progress:0,state:'stopped',updatedAt:Date.now(),routeName:name.value.trim()||'Gezeichnete Route'}};
+  draft.saving=true;button.disabled=true;
+  try{
+    await db.put('markers',draft.id,next);
+    const before=copyState();data.markers[draft.id]=next;undoStack.push(before);if(undoStack.length>50)undoStack.shift();
+    lastSavedSnapshot=copyState();const undoButton=$('#undo-btn');if(undoButton)undoButton.disabled=false;
+    const message=`${TYPES[next.t][0]}: Route festgelegt`;
+    map.closePopup(draft.popup);movementRouteDraft=null;shapeDraftLayer.clearLayers();redraw();logit(message);setSt(true);
+    if(mk[draft.id])openMarkerPopup(draft.id);
+  }catch(error){
+    draft.saving=false;button.disabled=false;setSt(false);console.error('Gezeichnete Bewegungsroute konnte nicht gespeichert werden.',error);
+    alert('Route konnte nicht gespeichert werden. Bitte Verbindung prüfen und erneut versuchen.');
+  }
+}
+function cancelMovementRouteDraft(draft=movementRouteDraft){
+  if(!draft||movementRouteDraft!==draft)return;
+  movementRouteDraft=null;shapeDraftLayer.clearLayers();if(map.hasLayer(shapeDraftLayer))map.removeLayer(shapeDraftLayer);
+  if(draft.popup&&map.hasLayer(draft.popup))map.closePopup(draft.popup);
+}
 function preview(){
   if(tmp) map.removeLayer(tmp); if(!pts.length){ tmp=null; return; }
   const movingRoute=!!movementDraft,p=pts.map(q=>pt(q[0],q[1])),o={color:movingRoute?'#e1e6e7':col,weight:2,dashArray:'4 4'};
@@ -933,8 +1021,9 @@ function mpreview(){
 }
 async function finish(){
   if(pts.length<(tool==='zone'?3:2)) return;
-  const id=newId(), o={k:tool,c:col,n:KINDS[tool],p:pts.slice()};
-  resetTemp(); data.shapes[id]=o; redraw(); sh[id].openPopup(); await write(()=>db.put('shapes',id,o)); logit(KINDS[o.k]+' gezeichnet');
+  const points=pts.slice(),kind=tool,o={k:kind,c:col,n:KINDS[kind],p:points};
+  const anchor=[points.reduce((sum,p)=>sum+p[0],0)/points.length,points.reduce((sum,p)=>sum+p[1],0)/points.length];
+  resetTemp();stageShape(o,anchor);
 }
 map.on('popupopen',()=>popOpen=1); map.on('popupclose',()=>popOpen=0);
 map.on('click',async e=>{
@@ -950,7 +1039,7 @@ map.on('click',async e=>{
   if(tool==='measure'){ mpts.push(e.latlng); mpreview(); return; }
   if(tool==='link') return;
   const id=newId();
-  if(tool==='text'){ const o={k:'text',c:col,n:'Text',p:[[x,y]]}; data.shapes[id]=o; redraw(); sh[id].openPopup(); await write(()=>db.put('shapes',id,o)); logit('Beschriftung gesetzt'); return; }
+  if(tool==='text'){ stageShape({k:'text',c:col,n:'Text',p:[[x,y]]},[x,y]); return; }
   const o={t:tool,n:TYPES[tool][0],s:'a',x,y};
   data.markers[id]=o;redraw();openMarkerPopup(id);await write(()=>db.put('markers',id,o));logit(`${TYPES[tool][0]} gesetzt`);
 });
@@ -959,7 +1048,7 @@ map.on('contextmenu',()=>resetTemp());
 map.on('mousemove',e=>{ $('#xy').textContent=`X ${Math.round(e.latlng.lng)}  Y ${Math.round(1000-e.latlng.lat)}`; });
 document.addEventListener('keydown',e=>{
   if(!cmd()) return;
-  if(e.key==='Escape'){ const n=Date.now(); if(n-lastEsc<600){ leave(); return; } lastEsc=n; if(document.body.classList.contains('pres')) pres(false); else setTool(null); }
+  if(e.key==='Escape'){ const n=Date.now(); if(n-lastEsc<600){ leave(); return; } lastEsc=n; if(document.body.classList.contains('pres')) pres(false); else if(shapeDraft)cancelShapeDraft();else if(movementRouteDraft)cancelMovementRouteDraft();else setTool(null); }
   else if(e.key==='Enter'&&document.activeElement.tagName!=='INPUT'){if(movementDraft)finishMovementDrawing();else if(DRAW.includes(tool))finish();}
 });
 function pres(on){ document.body.classList.toggle('pres',on); map.invalidateSize(); }
@@ -1006,7 +1095,7 @@ function buildSide(){
   s.append(top,resize);
   const mkBtn=(k,label,c)=>{ const b=el('button',label); if(c) b.style.borderLeft='3px solid '+c; b.onclick=()=>setTool(k); btns[k]=b; return b; };
   const grid=(...n)=>{ const d=el('div'); d.className='tools'; d.append(...n); return d; };
-  const hint=el('div',(edit?'Linie/Zone/Pfeil/Route: Punkte klicken, Doppelklick oder Enter beendet. Verbindung: zwei Einträge nacheinander anklicken. ':'')+'Messen: Rechtsklick setzt zurück. Esc wählt ab, zweimal Esc führt zur Tarnseite.'); hint.style.cssText='font-size:12px;color:#777;margin-top:8px';
+  const hint=el('div',(edit?'Linie/Zone/Pfeil/Route: Punkte klicken, Doppelklick oder Enter beendet; danach speichern. Text: Karte anklicken und speichern. Verbindung: zwei Einträge anklicken und speichern. ':'')+'Messen: Rechtsklick setzt zurück. Esc wählt ab, zweimal Esc führt zur Tarnseite.'); hint.style.cssText='font-size:12px;color:#777;margin-top:8px';
   if(edit){
     const categories=el('div');categories.className='place-categories';
     PLACE_CATEGORIES.forEach(([name,keys],index)=>{
@@ -1126,7 +1215,7 @@ function showEmergency404(){
   if(movementTimer)clearInterval(movementTimer);movementTimer=null;
   if(launchSyncTimer)clearInterval(launchSyncTimer);launchSyncTimer=null;
   if(launchExpiryTimer)clearTimeout(launchExpiryTimer);launchExpiryTimer=null;
-  tool=null;resetTemp();document.body.classList.remove('cmd','pres','tooling');edit=false;
+  cancelShapeDraft();cancelMovementRouteDraft();tool=null;resetTemp();document.body.classList.remove('cmd','pres','tooling');edit=false;
   if(map.hasLayer(group))map.removeLayer(group);group.clearLayers();launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};$('#launch-hud').classList.remove('on');if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);
   $('#namegate').style.display='none';$('#gate').style.display='none';$('#emergency-404').style.display='grid';map.invalidateSize();
   emergencyWatchTimer=setInterval(async()=>{try{const state=await db.emergency();if(!state.active){clearInterval(emergencyWatchTimer);emergencyWatchTimer=null;emergencyBlocked=false;$('#emergency-404').style.display='none';$('#gate').style.display='grid';$('#gate-error').textContent='Notabschaltung aufgehoben. Bitte erneut anmelden.';}}catch(e){console.warn('Notabschaltungsstatus wird erneut geprüft.',e);}},5000);
@@ -1204,6 +1293,7 @@ async function switchMap(name){
   if(!['ls','cp'].includes(name)||name===activeMap||mapSwitching)return;
   mapSwitching=true;document.querySelectorAll('#map-picker button').forEach(b=>b.disabled=true);
   try{
+    cancelShapeDraft();cancelMovementRouteDraft();
     await db.del('presence',presenceId).catch(e=>console.warn('Vorherige Kartenpräsenz konnte nicht entfernt werden.',e));
     map.closePopup();popOpen=0;activeMap=name;mapGeneration++;backupRun='';tool=null;resetTemp();sel();undoStack=[];data=EMPTY();data.presence={};
     group.clearLayers();group.addLayer(markerLayer);group.addLayer(launchLayer);group.addLayer(launchPreviewLayer);launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};mk={};sh={};renderList();renderLog();applyDef();renderLaunches();
@@ -1217,7 +1307,8 @@ function leave(){
   if(movementTimer)clearInterval(movementTimer);movementTimer=null;
   if(launchSyncTimer)clearInterval(launchSyncTimer);launchSyncTimer=null;
   db.del('presence',presenceId).catch(()=>{});
-  sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel(); pres(false);
+  cancelShapeDraft();cancelMovementRouteDraft();sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel(); pres(false);
+  if(map.hasLayer(shapeDraftLayer))map.removeLayer(shapeDraftLayer);shapeDraftLayer.clearLayers();
   map.removeLayer(group);group.clearLayers();launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};if(launchExpiryTimer)clearTimeout(launchExpiryTimer);launchExpiryTimer=null;$('#launch-hud').classList.remove('on');if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);gridLayer.clearLayers();
   data=EMPTY(); edit=false; undoStack=[]; lastSavedSnapshot=null; activeMap='ls'; map.doubleClickZoom.enable();
   $('#alarm').classList.remove('on'); document.body.classList.remove('cmd'); setLayer(cur||'karte');
