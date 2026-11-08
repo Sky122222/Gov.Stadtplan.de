@@ -59,13 +59,6 @@ aside h3:first-child{margin-top:0}
 .place-category[open] summary:after{content:'−'}
 .place-category .tools{padding:0 8px 8px}
 .place-category .tools button{min-height:36px}
-.mobile-glyph{display:grid;place-items:center;width:34px;height:34px;border:2px solid var(--c);border-radius:50%;background:#e7ecec;color:#101618;font:600 18px/1 'IBM Plex Sans',sans-serif;box-shadow:0 0 12px #000b}
-.mobile-glyph img{width:26px;height:26px;object-fit:contain;transform:rotate(var(--heading,0deg));filter:drop-shadow(0 1px 2px #000)}
-.mobile-glyph span{display:block;transform:rotate(var(--heading,0deg))}
-.mobile-glyph span{display:block;transform:rotate(var(--heading,0deg))}
-.mk-mobile{width:38px;height:38px;border:0;background:transparent;box-shadow:none;transform:none}
-.mk-mobile .mk-status{top:-3px;right:-3px;transform:none}
-.mk-mobile.st-z{background:transparent;box-shadow:none}
 .movement-state{padding:6px 8px;background:#111719;border-left:2px solid #818b8e;color:#b9c1c3;font-size:12px}
 .movement-controls{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .movement-controls button{font:inherit;font-size:12px;background:#161c1e;color:#d6d6d6;border:1px solid #3b4447;padding:7px;cursor:pointer}
@@ -314,14 +307,14 @@ const TYPES = {
   fib:['Federal Investigation Bureau HQ','FIB','#d5d9de','logo5.png'],
   fire:['Los Santos Fire Department','LSFD','#e16b58','logo6.png'],
   launcher:['Raketenwerfer','RW','#ff8a65'], depot:['Munitionsdepot','MD','#e5bd68'], fieldhospital:['Feldlazarett','FL','#d47ca1'],
-  pdvehicle:['PD-Fahrzeug','PD','#79a9dc',null,'vehicle','🚓','car.png'],
-  fibvehicle:['FIB-Fahrzeug','FIB','#d5d9de',null,'vehicle','🚙','car.png'],
-  armyvehicle:['Army-Fahrzeug','A','#b6bd79',null,'vehicle','🚙','car.png'],
-  mdvehicle:['MD-Fahrzeug','MD','#8fc7c1',null,'vehicle','🚑','car.png'],
-  fdvehicle:['FD-Fahrzeug','FD','#e16b58',null,'vehicle','🚒','car.png'],
-  pdoverwatch:['PD-Overwatch','PD','#79a9dc',null,'aircraft','🚁','helicopter.png'],
-  fiboverwatch:['FIB-Overwatch','FIB','#d5d9de',null,'aircraft','🚁','helicopter.png'],
-  armyoverwatch:['Army-Overwatch','A','#b6bd79',null,'aircraft','🚁','helicopter.png'],
+  pdvehicle:['PD-Fahrzeug','PD','#79a9dc',null,'vehicle'],
+  fibvehicle:['FIB-Fahrzeug','FIB','#d5d9de',null,'vehicle'],
+  armyvehicle:['Army-Fahrzeug','A','#b6bd79',null,'vehicle'],
+  mdvehicle:['MD-Fahrzeug','MD','#8fc7c1',null,'vehicle'],
+  fdvehicle:['FD-Fahrzeug','FD','#e16b58',null,'vehicle'],
+  pdoverwatch:['PD-Overwatch','PD','#79a9dc',null,'aircraft'],
+  fiboverwatch:['FIB-Overwatch','FIB','#d5d9de',null,'aircraft'],
+  armyoverwatch:['Army-Overwatch','A','#b6bd79',null,'aircraft'],
   rssmarlos:['RSS Marlos','RM','#c9a0ff',null,'ship','🚤'],
   destroyer:['Zerstörer','ZS','#91a9c2',null,'ship','🚢'],
   carrier:['Flugzeugträger','FT','#c0b4d8',null,'ship','🚢']
@@ -421,11 +414,10 @@ function markerPosition(o,now=Date.now()){
   if(MOBILE_TYPES.has(o.t)&&o.mv&&Array.isArray(o.mv.path)&&o.mv.path.length>1)return movementPoint(o.mv,movementProgress(o.mv,now))||{x:+o.x,y:+o.y,heading:0};
   return{x:+o.x,y:+o.y,heading:0};
 }
-function icon(o,heading=0){
-  const [,c,cl,image,mobile,glyph]=TYPES[o.t],status=o.s||'a',logo=image?`<img src="${image}" alt="" onerror="this.remove()">`:'';
-  const mobileImage=mobile&&TYPES[o.t][6],symbol=mobile?`<div class="mobile-glyph">${mobileImage?`<img src="${mobileImage}" alt="" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden style="--heading:${heading}deg">${glyph}</span>`:`<span style="--heading:${heading}deg">${glyph}</span>`}</div>`:`<i>${c}</i>${logo}`;
-  const classes=`mk${image?' has-logo':''}${mobile?' mk-mobile':''} st-${status}`;
-  return L.divIcon({className:'',html:`<div class="${classes}" style="--c:${cl}" title="${STATUS[status]}">${symbol}<span class="mk-status">${STATUS_SYMBOL[status]}</span></div>`,iconSize:mobile?[38,38]:image?[40,40]:[30,30],iconAnchor:mobile||image?[20,20]:[15,15],popupAnchor:[0,mobile?-22:image?-22:-17]});
+function icon(o){
+  const [,,cl,image]=TYPES[o.t],status=o.s||'a',logo=image?`<img src="${image}" alt="" onerror="this.remove()">`:'';
+  const classes=`mk${image?' has-logo':''} st-${status}`;
+  return L.divIcon({className:'',html:`<div class="${classes}" style="--c:${cl}" title="${STATUS[status]}"><i>${TYPES[o.t][1]}</i>${logo}<span class="mk-status">${STATUS_SYMBOL[status]}</span></div>`,iconSize:image?[40,40]:[30,30],iconAnchor:image?[20,20]:[15,15],popupAnchor:[0,image?-22:-17]});
 }
 function routeDistance(points){let total=0;for(let i=1;i<points.length;i++)total+=map.distance(pt(+points[i-1][0],+points[i-1][1]),pt(+points[i][0],+points[i][1]));return total;}
 function logit(a){ if(!edit) return; const id=newId(), o={t:Date.now(),u:user,a}; data.log[id]=o; db.put('log',id,o).catch(()=>{}); }
@@ -518,8 +510,6 @@ function animateMovers(){
     if(!MOBILE_TYPES.has(o.t)||!o.mv||o.mv.state!=='moving'||!Array.isArray(o.mv.path)||o.mv.path.length<2)continue;
     const marker=mk[id];if(!marker)continue;
     const position=markerPosition(o,now);marker.setLatLng(pt(position.x,position.y));
-    const glyph=marker.getElement()&&marker.getElement().querySelector('.mobile-glyph span');
-    if(glyph)glyph.style.setProperty('--heading',`${position.heading}deg`);
     updateMovementStatus(id,o);
   }
 }
@@ -615,7 +605,7 @@ function renderMarkers(){
       const center=map.unproject(L.point(x,y),zoom),ids=items.map(item=>item.id);
       L.marker(center,{icon:clusterIcon(ids.length),keyboard:false}).bindPopup(()=>clusterPopup(ids),{maxWidth:300}).addTo(markerLayer);
     }else{
-      const {id,o}=items[0],position=markerPosition(o),ll=pt(position.x,position.y),marker=mk[id]=L.marker(ll,{icon:icon(o,position.heading),title:`${o.n} · ${STATUS[o.s||'a']}`,draggable:edit&&!MOBILE_TYPES.has(o.t),zIndexOffset:MOBILE_TYPES.has(o.t)?2000:0});
+      const {id,o}=items[0],position=markerPosition(o),ll=pt(position.x,position.y),marker=mk[id]=L.marker(ll,{icon:icon(o),title:`${o.n} · ${STATUS[o.s||'a']}`,draggable:edit&&!MOBILE_TYPES.has(o.t),zIndexOffset:MOBILE_TYPES.has(o.t)?2000:0});
       if(!MOBILE_TYPES.has(o.t))marker.bindPopup(()=>popMk(id));
       marker.addTo(markerLayer);
       marker.on('click',()=>{if(tool==='link'){marker.closePopup();if(!linkA)linkA=id;else{if(linkA!==id)mkLink(linkA,id);linkA=null;}return;}if(MOBILE_TYPES.has(o.t))openMarkerPopup(id);});
@@ -1080,19 +1070,6 @@ function exportVisibleMap(ctx,size,logoImages={}){
     const mark=34*u;
     ctx.save();ctx.translate(x,y);
     if(status==='z') ctx.globalAlpha=.55;
-    if(MOBILE_TYPES.has(o.t)){
-      const size=42*u;ctx.rotate(position.heading*Math.PI/180);
-      ctx.fillStyle='#e7ecec';ctx.strokeStyle=color;ctx.lineWidth=2*u;
-      ctx.beginPath();ctx.arc(0,0,size/2,0,Math.PI*2);ctx.fill();ctx.stroke();
-      const mobileImage=TYPES[o.t][6]&&logoImages[TYPES[o.t][6]];
-      if(mobileImage)ctx.drawImage(mobileImage,-size*.34,-size*.34,size*.68,size*.68);
-      else{ctx.fillStyle='#f4f6f6';ctx.textAlign='center';ctx.textBaseline='middle';
-        ctx.font=`${Math.max(14,20*u)}px "Apple Color Emoji","Segoe UI Emoji",sans-serif`;ctx.fillText(TYPES[o.t][5],0,0);}
-      const badge=13*u;ctx.fillStyle=STATUS_COLOR[status];ctx.strokeStyle='#101314';ctx.lineWidth=Math.max(1,1.5*u);
-      ctx.beginPath();ctx.arc(size*.38,-size*.38,badge,0,Math.PI*2);ctx.fill();ctx.stroke();
-      ctx.fillStyle='#101314';ctx.font=`700 ${Math.max(10,9*u)}px "IBM Plex Sans",sans-serif`;ctx.fillText(STATUS_SYMBOL[status],size*.38,-size*.38);
-      ctx.restore();continue;
-    }
     if(TYPES[o.t][3]){
       const logo=logoImages[TYPES[o.t][3]],logoSize=46*u;
       ctx.fillStyle='#f3f4f3';ctx.strokeStyle=color;ctx.lineWidth=2*u;
