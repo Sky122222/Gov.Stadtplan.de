@@ -32,6 +32,28 @@ main{flex:1;display:flex;min-height:0}
 #map-caption b{display:block;color:#f0f2f2;font-size:12px}
 #movement-instructions{display:none;position:absolute;top:150px;left:56px;z-index:950;max-width:min(420px,calc(100% - 72px));padding:9px 12px;background:#111719ed;border:1px solid #748084;color:#e5e9ea;font:500 12px 'Barlow Condensed',sans-serif;letter-spacing:.08em}
 #movement-instructions.on{display:block}
+#launch-hud{display:none;position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:1200;width:min(380px,calc(100% - 32px));padding:13px 15px;background:linear-gradient(135deg,#171b1cF2,#090b0cF2);border:1px solid #647176;box-shadow:0 10px 38px #0009;color:#eef2f2;pointer-events:none}
+#launch-hud.on{display:block;animation:launchHudIn .24s ease-out}
+#launch-hud .launch-kicker{display:flex;justify-content:space-between;color:#aab5b7;font:600 10px 'Barlow Condensed',sans-serif;letter-spacing:.18em}
+#launch-hud .launch-kicker b{color:#f0b24a}
+#launch-hud strong{display:block;margin-top:3px;font:600 20px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase}
+#launch-hud-status{margin-top:2px;color:#b8c1c2;font-size:12px}
+.launch-progress{height:3px;margin-top:10px;background:#303638;overflow:hidden}
+.launch-progress i{display:block;width:0;height:100%;background:#f0b24a;box-shadow:0 0 10px #f0b24a;transition:width .12s linear}
+#launch-abort{display:none;position:absolute;right:13px;top:48px;pointer-events:auto;padding:5px 8px;background:#211717;border:1px solid #874747;color:#ffc6bd;font:600 10px 'Barlow Condensed',sans-serif;letter-spacing:.12em;cursor:pointer}
+#launch-abort.on{display:block}
+#launch-counter{display:none;align-items:center;gap:8px;padding:5px 9px;border:1px solid #414a4d;color:#d9dfe0;font:500 11px 'Barlow Condensed',sans-serif;letter-spacing:.12em;white-space:nowrap}
+#launch-counter b{color:#f0b24a;font-size:15px}
+.cmd #launch-counter{display:flex}
+@keyframes launchHudIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+.launch-target-pulse{width:24px;height:24px;border:1px solid #f0b24a;border-radius:50%;box-shadow:0 0 0 5px #f0b24a22,0 0 18px #f0b24a99;animation:targetPulse 1s ease-in-out infinite alternate}
+.launch-rocket-token{position:relative;width:7px;height:12px;border:1px solid #fff1c1;border-radius:5px 5px 3px 3px;background:linear-gradient(90deg,#d98832,#fff1c1 45%,#f0b24a);box-shadow:0 0 8px #f0b24a,0 0 22px #ff5a4d;transform:rotate(var(--rocket-angle,0deg));animation:rocketPulse .45s ease-in-out infinite alternate}
+.launch-rocket-token:before{content:'';position:absolute;left:0;top:-5px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:5px solid #fff1c1}
+.launch-rocket-token:after{content:'';position:absolute;left:1px;bottom:-6px;width:0;height:0;border-left:2px solid transparent;border-right:2px solid transparent;border-top:6px solid #ff6b65}
+.launch-impact-pulse{border:2px solid #ffcc70;border-radius:50%;background:#ff874b55;box-shadow:0 0 25px #ff8c43;animation:impactPulse .85s ease-out forwards}
+@keyframes targetPulse{to{transform:scale(1.25);box-shadow:0 0 0 9px #f0b24a10,0 0 24px #f0b24a}}
+@keyframes rocketPulse{to{transform:rotate(var(--rocket-angle,0deg)) scale(.75);box-shadow:0 0 5px #f0b24a,0 0 12px #ff5a4d}}
+@keyframes impactPulse{from{transform:scale(.45);opacity:1}to{transform:scale(1.6);opacity:0}}
 #layers button{border:0;background:none;padding:8px 14px;font:inherit;font-size:13.5px;cursor:pointer;color:var(--mut)}
 #layers button.on{background:#111;color:#fff}
 #xy{display:none;position:absolute;left:12px;bottom:12px;z-index:900;font:500 14px 'Barlow Condensed',sans-serif;letter-spacing:.08em;color:var(--acc);background:rgba(0,0,0,.7);padding:3px 10px}
@@ -67,6 +89,14 @@ aside h3:first-child{margin-top:0}
 .movement-fields{display:grid;gap:6px}
 .movement-fields select,.movement-fields input{width:100%;padding:6px;background:#111719;border:1px solid #3b4447;color:#e5e9ea;font:inherit;font-size:12px}
 .movement-hint{font-size:11px;color:#929c9f}
+.rocket-panel{gap:7px}
+.rocket-count{display:flex;align-items:center;justify-content:space-between;color:#aab2b4;font-size:12px}
+.rocket-count b{color:#f0b24a;font:600 19px 'Barlow Condensed',sans-serif}
+.rocket-total{color:#8e999b}
+.rocket-panel select{width:100%;padding:7px;background:#111719;border:1px solid #3b4447;color:#e5e9ea;font:inherit;font-size:12px}
+.rocket-panel button{font:500 12px 'Barlow Condensed',sans-serif;letter-spacing:.04em}
+.rocket-panel .rocket-launch-btn{background:#272014;border-color:#8f6c2c;color:#ffe0a0}
+.rocket-panel .rocket-secondary-btn{background:#161c1e;color:#b9c1c3}
 .tools button,.pp button,#out{font:inherit;font-size:13px;background:#161616;color:#d6d6d6;border:1px solid #333;padding:7px 8px;cursor:pointer;text-align:left}
 .tools button:hover,.pp button:hover,#out:hover{border-color:#777}
 .tools button.on{border-color:var(--acc);color:var(--acc)}
@@ -115,10 +145,11 @@ body.cmd{background:#050505;color:#d6d6d6}
 .cluster-popup .cluster-item:hover{border-color:#aeb8bb}
 .cluster-popup .cluster-item small{color:#9ba4a6;white-space:nowrap}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0b0b0b;color:#d6d6d6;border:1px solid #333;border-radius:0}
-.pp{display:flex;flex-direction:column;gap:6px;min-width:170px}
+.leaflet-popup-content{overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}
+.pp{display:flex;flex-direction:column;gap:6px;min-width:min(170px,calc(100vw - 72px))}
 .pp b{font:600 14px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}
 .pp input{background:#161616;border:1px solid #333;color:#fff;padding:6px;font:inherit}
-.pp-marker{min-width:220px}
+.pp-marker{min-width:min(220px,calc(100vw - 96px))}
 .pp-marker .marker-name{font-size:15px;font-weight:600;color:#f1f3f3}
 .pp-section{display:grid;gap:6px;padding-top:7px;border-top:1px solid #303638}
 .pp-section-title{color:#8f999c;font:500 10px 'Barlow Condensed',sans-serif;letter-spacing:.16em}
@@ -136,6 +167,7 @@ body.cmd{background:#050505;color:#d6d6d6}
 #gate input.bad{border-color:#c33}
 #gate button{font:inherit;background:#111;color:#fff;border:0;border-radius:4px;padding:8px 14px;cursor:pointer}
 @media(max-width:800px){main{flex-direction:column}aside{width:auto;flex-basis:auto;max-height:42vh;border-left:0;border-top:1px solid #2a2a2a}#side-resize{display:none}}
+@media(max-width:500px){.leaflet-popup-content{margin:10px 12px}.pp-marker{min-width:0}}
 @media(prefers-reduced-motion:reduce){#boot{transition:none}}
 .mk.st-b{border-style:dashed;box-shadow:none}
 .mk.st-z{opacity:.82}
@@ -269,6 +301,8 @@ aside summary{cursor:pointer;margin-top:18px;color:#fff;font:600 15px 'Barlow Co
 <main>
   <div id="mapwrap">
     <div id="map" tabindex="-1"></div>
+    <div id="launch-hud" role="status" aria-live="polite"><div class="launch-kicker"><span>SIMULIERTER ABSCHUSS</span><b id="launch-hud-phase">STANDBY</b></div><strong id="launch-hud-title"></strong><div id="launch-hud-status"></div><div class="launch-progress"><i id="launch-hud-progress"></i></div><button id="launch-abort" type="button">COUNTDOWN ABBRECHEN</button></div>
+    <div id="launch-counter" aria-live="polite"><span>ABSCHÜSSE</span><b id="launch-total">0</b></div>
     <button id="side-expand" type="button" aria-label="Seitenleiste anzeigen">Seitenleiste</button>
     <div id="map-picker"><button data-map="ls" class="on">LOS SANTOS</button><button data-map="cp">CAYO PERICO</button></div>
     <div id="layers"><button data-l="karte" class="on">Stadtplan</button><button data-l="sat">Luftbild</button></div>
@@ -300,7 +334,7 @@ const M_PER_UNIT = 0;
 const TYPES = {
   silo:['Raketensilo','R','#ff5a4d'], base:['Army Außenposten','B','#e8e8e8'], aa:['Flugabwehr','F','#f0b24a'],
   radar:['Radarstation','Ra','#8fe3a8'], air:['Airforce Base','L','#9ac7ff'], navy:['Marinestützpunkt','M','#6fa8dc'], hq:['Hauptquartier','HQ','#ffffff'],
-  rsr:['RSS Resolute','RS','#c9a0ff'], bunker:['Bunker','Bu','#d0a26a'],
+  rsr:['RSS Resolute','RS','#c9a0ff',null,'ship'], bunker:['Bunker','Bu','#d0a26a'],
   gov:['Government Gebäude','Gov','#d7dcde','logo2.png'],
   cavalry:['327th Cavalry Base','327','#d3c09a','logo3.png'],
   mrpd:['Mission Row Police Department','PD','#79a9dc','logo4.png'],
@@ -383,10 +417,27 @@ const db = {
 const STATUS={a:'Aktiv',b:'Im Bau',z:'Zerstört'}, STATUS_COLOR={a:'#a4d6b8',b:'#f0b24a',z:'#ff6b65'}, STATUS_SYMBOL={a:'✓',b:'◷',z:'×'}, RAD=['silo','radar','aa'], MOBILE_TYPES=new Set(Object.keys(TYPES).filter(k=>TYPES[k][4])), COLORS=['#8fe3a8','#ff5a4d','#6fa8dc','#f0b24a','#ffffff'];
 const KINDS={line:'Linie',zone:'Zone',arrow:'Pfeil',route:'Route',text:'Text',link:'Verbindung'}, DRAW=['line','zone','arrow','route'];
 const DC={5:'#6fa8dc',4:'#8fe3a8',3:'#f0d34a',2:'#ff5a4d',1:'#ffffff'};
-const EMPTY=()=>({markers:{},shapes:{},meta:{},log:{}});
+const ROCKET_TYPES={small:{name:'Klein',radius:20,color:'#8fe3a8'},medium:{name:'Mittel',radius:50,color:'#f0b24a'},large:{name:'Groß',radius:100,color:'#ff6b65'}};
+const LAUNCH_COUNTDOWN_MS=5000, LAUNCH_FLIGHT_MS=4200;
+const isRocketType=key=>Object.prototype.hasOwnProperty.call(ROCKET_TYPES,key);
+function validLaunch(launch){
+  const point=p=>Array.isArray(p)&&p.length===2&&Number.isFinite(+p[0])&&Number.isFinite(+p[1])&&+p[0]>=0&&+p[0]<=1&&+p[1]>=0&&+p[1]<=1;
+  return !!launch&&typeof launch==='object'&&typeof launch.siloId==='string'&&typeof launch.siloName==='string'&&typeof launch.by==='string'&&
+    isRocketType(launch.rocket)&&point(launch.from)&&point(launch.target)&&Number.isFinite(+launch.createdAt)&&+launch.createdAt>0&&
+    Number.isFinite(+launch.launchAt)&&+launch.launchAt>=+launch.createdAt&&
+    (launch.flightMs===undefined||+launch.flightMs===LAUNCH_FLIGHT_MS)&&
+    (launch.radius===undefined||+launch.radius===ROCKET_TYPES[launch.rocket].radius)&&
+    (launch.cancelled===undefined||typeof launch.cancelled==='boolean');
+}
+function launchRadius(launch){return Number.isFinite(+launch.radius)?+launch.radius:ROCKET_TYPES[launch.rocket].radius;}
+function rocketIcon(angle){
+  return L.divIcon({className:'',html:`<div class="launch-rocket-token" style="--rocket-angle:${angle}deg"></div>`,iconSize:[18,18],iconAnchor:[9,9]});
+}
+const EMPTY=()=>({markers:{},shapes:{},meta:{},log:{},launches:{}});
 let data=EMPTY(), mk={}, sh={}, tool=null, col=COLORS[0], pts=[], mpts=[], tmp=null, mline=null, mlab=null, btns={}, hidden=new Set(), busy=0, popOpen=0, timer=null, clock=null, edit=false, user='Unbekannt', linkA=null, lastEsc=0;
 const group=L.layerGroup(), markerLayer=L.layerGroup(), cmd=()=>document.body.classList.contains('cmd');
-let clusterFocus=null, sidebarWidth=310, movementTimer=null, movementDraft=null;
+const launchLayer=L.layerGroup(),launchPreviewLayer=L.layerGroup();
+let clusterFocus=null, sidebarWidth=310, movementTimer=null, launchSyncTimer=null, movementDraft=null, launchTargetDraft=null, launchAnimationLayers={};
 const fmt=u=>M_PER_UNIT?((u*=M_PER_UNIT)>=1000?(u/1000).toFixed(1)+' km':Math.round(u)+' m'):Math.round(u)+' E';
 const pt=(x,y)=>[1000*(1-y),1000*x];
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -435,6 +486,44 @@ function movementStateText(o){
 }
 function updateMovementStatus(id,o){
   const state=document.getElementById(`move-state-${id}`),text=movementStateText(o);if(state&&state.textContent!==text)state.textContent=text;
+}
+function completedLaunches(now=Date.now()){
+  return Object.values(data.launches||{}).filter(launch=>validLaunch(launch)&&!launch.cancelled&&+launch.launchAt<=now);
+}
+function updateLaunchCounters(){
+  const launches=completedLaunches(),total=$('#launch-total');
+  if(total)total.textContent=String(launches.length);
+  document.querySelectorAll('[data-launch-count]').forEach(node=>{
+    node.textContent=String(launches.filter(launch=>launch.siloId===node.dataset.launchCount).length);
+  });
+  document.querySelectorAll('[data-launch-total]').forEach(node=>{node.textContent=String(launches.length);});
+}
+function rocketPanel(id,o,editable){
+  const section=el('div');section.className='pp-section rocket-panel';
+  const head=el('div','ABSCHUSS-SIMULATION');head.className='pp-section-title';section.append(head);
+  const count=el('div');count.className='rocket-count';count.append(el('span','Silo-Abschüsse'));const value=el('b',String(completedLaunches().filter(launch=>launch.siloId===id).length));value.dataset.launchCount=id;count.append(value);section.append(count);
+  const total=el('small',`Gesamtabschüsse · ${completedLaunches().length}`);total.className='rocket-total';total.dataset.launchTotal='';section.append(total);
+  if(!editable){section.append(el('small','Abschüsse und Einschlagkreise bleiben im Lagebild gespeichert.'));return section;}
+  const draft=launchTargetDraft&&launchTargetDraft.siloId===id?launchTargetDraft:null;
+  const select=el('select');select.setAttribute('aria-label','Simulierter Raketentyp');
+  Object.entries(ROCKET_TYPES).forEach(([key,type])=>{const option=el('option',`${type.name} · Radius ${type.radius} E`);option.value=key;select.append(option);});
+  select.value=draft&&isRocketType(draft.rocket)?draft.rocket:'small';
+  select.onchange=()=>{
+    if(draft){draft.rocket=select.value;renderLaunchPreview();}
+    info.textContent=`Einschlagkreis · ${ROCKET_TYPES[select.value].radius} E`;
+  };
+  section.append(select);
+  const info=el('small',draft&&draft.target?`Ziel gewählt · ${Math.round(draft.target[0]*1000)} / ${Math.round(draft.target[1]*1000)} · Radius ${ROCKET_TYPES[select.value].radius} E`:`Einschlagkreis · ${ROCKET_TYPES[select.value].radius} E`);
+  section.append(info);
+  if(draft&&draft.target){
+    const launch=btn('5-Sekunden-Countdown starten',()=>startRocketLaunch(id,select.value));launch.className='rocket-launch-btn';
+    const change=btn('Ziel neu wählen',()=>beginRocketTargetSelection(id,select.value));change.className='rocket-secondary-btn';
+    section.append(launch,change);
+  }else{
+    const choose=btn(draft?'Ziel auf Karte wählen…':'Ziel auf Karte wählen',()=>beginRocketTargetSelection(id,select.value));choose.className='rocket-launch-btn';
+    section.append(choose);
+  }
+  return section;
 }
 function movementPanel(id,o,editable){
   if(!MOBILE_TYPES.has(o.t))return null;
@@ -512,6 +601,135 @@ function animateMovers(){
     const position=markerPosition(o,now);marker.setLatLng(pt(position.x,position.y));
     updateMovementStatus(id,o);
   }
+  animateRocketLaunches(now);
+}
+function targetLatLng(target){return pt(+target[0],+target[1]);}
+function rocketPosition(launch,now=Date.now()){
+  const progress=Math.max(0,Math.min(1,(now-(+launch.launchAt||0))/(+launch.flightMs||LAUNCH_FLIGHT_MS)));
+  return{x:+launch.from[0]+(+launch.target[0]-+launch.from[0])*progress,y:+launch.from[1]+(+launch.target[1]-+launch.from[1])*progress,progress};
+}
+function renderLaunchPreview(){
+  launchPreviewLayer.clearLayers();
+  if(!launchTargetDraft)return;
+  const silo=data.markers[launchTargetDraft.siloId];if(!silo)return;
+  const from=[+silo.x,+silo.y],color=(isRocketType(launchTargetDraft.rocket)?ROCKET_TYPES[launchTargetDraft.rocket]:ROCKET_TYPES.small).color;
+  L.circleMarker(pt(from[0],from[1]),{radius:8,color,weight:2,fillOpacity:.16,interactive:false}).addTo(launchPreviewLayer);
+  if(launchTargetDraft.target){
+    L.polyline([pt(from[0],from[1]),targetLatLng(launchTargetDraft.target)],{color,weight:2,dashArray:'8 7',opacity:.85,interactive:false}).addTo(launchPreviewLayer);
+    L.marker(targetLatLng(launchTargetDraft.target),{interactive:false,keyboard:false,icon:L.divIcon({className:'',html:'<div class="launch-target-pulse"></div>',iconSize:[24,24],iconAnchor:[12,12]})}).addTo(launchPreviewLayer);
+  }
+}
+function beginRocketTargetSelection(id,rocket='small'){
+  if(!edit||!data.markers[id]||data.markers[id].t!=='silo')return;
+  resetTemp();
+  launchTargetDraft={siloId:id,rocket:isRocketType(rocket)?rocket:'small',target:null};
+  map.closePopup();renderLaunchPreview();
+  const note=$('#movement-instructions');note.textContent='ABSCHUSS-SIMULATION · Zielpunkt auf der Karte anklicken · Esc bricht ab';note.classList.add('on');
+}
+function acceptRocketTarget(point){
+  if(!launchTargetDraft)return;
+  if(point[0]<0||point[0]>1||point[1]<0||point[1]>1){
+    const note=$('#movement-instructions');note.textContent='Zielpunkt muss innerhalb des Kartenbereichs liegen.';note.classList.add('on');return;
+  }
+  launchTargetDraft.target=point;renderLaunchPreview();
+  const id=launchTargetDraft.siloId,note=$('#movement-instructions');
+  note.textContent='ZIEL GESETZT · Abschuss im Silopopup bestätigen oder Esc zum Abbrechen';note.classList.add('on');
+  openMarkerPopup(id);
+}
+async function startRocketLaunch(id,rocket){
+  if(!edit||!isRocketType(rocket))return;
+  const silo=data.markers[id],draft=launchTargetDraft;
+  if(!silo||silo.t!=='silo'||!draft||draft.siloId!==id||!draft.target)return;
+  const button=[...document.querySelectorAll('.rocket-launch-btn')].find(item=>item.textContent.includes('Countdown starten'));
+  if(button)button.disabled=true;
+  const now=Date.now(),idLaunch=newId(),type=ROCKET_TYPES[rocket],launch={
+    siloId:id,siloName:silo.n||TYPES.silo[0],from:[+silo.x,+silo.y],target:draft.target.slice(),
+    rocket,radius:type.radius,createdAt:now,launchAt:now+LAUNCH_COUNTDOWN_MS,
+    flightMs:LAUNCH_FLIGHT_MS,by:user,cancelled:false
+  };
+  try{
+    await db.put('launches',idLaunch,launch);
+    data.launches=data.launches||{};data.launches[idLaunch]=launch;
+    launchTargetDraft=null;map.closePopup();resetTemp();undoStack=[];lastSavedSnapshot=copyState();const undoButton=$('#undo-btn');if(undoButton)undoButton.disabled=true;renderLaunches();logit(`${launch.siloName}: ${type.name} Abschuss freigegeben`);playTone('alarm');
+  }catch(error){
+    console.error('Simulierter Abschuss konnte nicht synchronisiert werden.',error);
+    if(button)button.disabled=false;
+    alert('Abschuss konnte nicht gestartet werden. Bitte Datenbankverbindung prüfen.');
+  }
+}
+async function cancelRocketLaunch(id){
+  const launch=data.launches&&data.launches[id];
+  if(!edit||!launch||launch.by!==user||Date.now()>=+launch.launchAt)return;
+  const cancelled={...launch,cancelled:true,cancelledAt:Date.now()};
+  try{
+    await db.put('launches',id,cancelled);data.launches[id]=cancelled;undoStack=[];lastSavedSnapshot=copyState();const b=$('#undo-btn');if(b)b.disabled=true;renderLaunches();logit(`${launch.siloName}: Countdown abgebrochen`);
+  }catch(error){
+    console.error('Countdown konnte nicht abgebrochen werden.',error);
+    alert('Countdown konnte nicht abgebrochen werden. Bitte Verbindung prüfen.');
+  }
+}
+function updateLaunchHud(now=Date.now()){
+  const hud=$('#launch-hud'),phase=$('#launch-hud-phase'),title=$('#launch-hud-title'),status=$('#launch-hud-status'),progress=$('#launch-hud-progress'),abort=$('#launch-abort');
+  if(!hud)return;
+  const launches=Object.entries(data.launches||{}).filter(([,launch])=>validLaunch(launch)&&!launch.cancelled).sort((a,b)=>(+b[1].createdAt||0)-(+a[1].createdAt||0));
+  const current=launches.find(([,launch])=>now<+launch.launchAt+(+launch.flightMs||LAUNCH_FLIGHT_MS)+2200);
+  if(!current){hud.classList.remove('on');abort.classList.remove('on');return;}
+  const [id,launch]=current,rocket=ROCKET_TYPES[launch.rocket]||ROCKET_TYPES.small,countdown=+launch.launchAt-now,impactAt=+launch.launchAt+(+launch.flightMs||LAUNCH_FLIGHT_MS);
+  title.textContent=`${launch.siloName||'Raketensilo'} · ${rocket.name}`;
+  abort.onclick=()=>cancelRocketLaunch(id);
+  if(countdown>0){
+    phase.textContent='T-MINUS';status.textContent=`Start in ${Math.ceil(countdown/1000)} Sekunden · Ziel ${Math.round(+launch.target[0]*1000)} / ${Math.round(+launch.target[1]*1000)}`;
+    progress.style.width=`${Math.max(0,Math.min(100,(1-countdown/LAUNCH_COUNTDOWN_MS)*100))}%`;
+    abort.classList.toggle('on',edit&&launch.by===user);
+  }else if(now<impactAt){
+    phase.textContent='SIMULATION LÄUFT';status.textContent=`Auf dem Weg zum Ziel · Radius ${launchRadius(launch)} E`;
+    progress.style.width=`${Math.max(0,Math.min(100,(now-launch.launchAt)/(impactAt-launch.launchAt)*100))}%`;abort.classList.remove('on');
+  }else{
+    phase.textContent='EINSCHLAG REGISTRIERT';status.textContent=`Kartenwirkung · Radius ${launchRadius(launch)} E`;
+    progress.style.width='100%';abort.classList.remove('on');
+  }
+  hud.classList.add('on');
+}
+function renderLaunches(){
+  launchLayer.clearLayers();launchAnimationLayers={};
+  const now=Date.now();
+  for(const [id,launch] of Object.entries(data.launches||{})){
+    if(!validLaunch(launch)||launch.cancelled)continue;
+    const from=targetLatLng(launch.from),to=targetLatLng(launch.target),launchAt=+launch.launchAt,impactAt=launchAt+(+launch.flightMs||LAUNCH_FLIGHT_MS),color=ROCKET_TYPES[launch.rocket].color;
+    L.polyline([from,to],{color,weight:2,dashArray:now<launchAt?'3 8':'8 6',opacity:now<launchAt?.35:.7,interactive:false}).addTo(launchLayer);
+    if(now>=impactAt){
+      L.circle(to,{radius:launchRadius(launch),color:'#ff9c5e',weight:2,dashArray:'7 5',fillColor:'#ff7844',fillOpacity:.09,interactive:false}).addTo(launchLayer);
+      if(now-impactAt<1000)L.marker(to,{interactive:false,keyboard:false,icon:L.divIcon({className:'',html:'<div class="launch-impact-pulse"></div>',iconSize:[44,44],iconAnchor:[22,22]})}).addTo(launchLayer);
+    }else{
+      L.marker(to,{interactive:false,keyboard:false,icon:L.divIcon({className:'',html:'<div class="launch-target-pulse"></div>',iconSize:[24,24],iconAnchor:[12,12]})}).addTo(launchLayer);
+      const position=now<launchAt?{x:+launch.from[0],y:+launch.from[1]}:rocketPosition(launch,now);
+      const angle=Math.atan2(+launch.target[0]-+launch.from[0],-(+launch.target[1]-+launch.from[1]))*180/Math.PI;
+      launchAnimationLayers[id]=L.marker(pt(position.x,position.y),{interactive:false,keyboard:false,zIndexOffset:3000,icon:rocketIcon(angle)}).addTo(launchLayer);
+    }
+  }
+  updateLaunchCounters();updateLaunchHud(now);
+}
+function animateRocketLaunches(now=Date.now()){
+  let rebuild=false;
+  for(const [id,rocket] of Object.entries(launchAnimationLayers)){
+    const launch=data.launches[id];if(!launch||launch.cancelled){rebuild=true;continue;}
+    const impactAt=+launch.launchAt+(+launch.flightMs||LAUNCH_FLIGHT_MS);
+    if(now>=impactAt){rebuild=true;continue;}
+    const position=now<+launch.launchAt?{x:+launch.from[0],y:+launch.from[1]}:rocketPosition(launch,now);
+    rocket.setLatLng(pt(position.x,position.y));
+  }
+  if(rebuild)renderLaunches();
+  updateLaunchHud(now);
+}
+async function syncLaunches(){
+  if(!cmd()||mapSwitching||busy)return;
+  const generation=mapGeneration;
+  try{
+    const launches=await db.all('launches');
+    if(generation!==mapGeneration||mapSwitching)return;
+    const next=launches&&typeof launches==='object'&&!Array.isArray(launches)?launches:{};
+    if(JSON.stringify(next)!==JSON.stringify(data.launches||{})){data.launches=next;undoStack=[];lastSavedSnapshot=copyState();const b=$('#undo-btn');if(b)b.disabled=true;renderLaunches();}
+  }catch(error){setSt(false);console.error('Abschuss-Simulation konnte nicht synchronisiert werden.',error);}
 }
 function popMk(id){
   const o=data.markers[id], T=TYPES[o.t];
@@ -526,6 +744,7 @@ function popMk(id){
     [[o.priority&&o.priority!=='normal'&&'Priorität',o.priority&&o.priority!=='normal'?o.priority:null],
       [o.r>0&&RAD.includes(o.t)&&'Radius',o.r>0&&RAD.includes(o.t)?fmt(o.r):null]].filter(v=>v[0]&&v[1]).forEach(([label,value])=>details.append(el('small',`${label} · ${value}`)));
     if(details.children.length>1)d.append(details);
+    if(o.t==='silo')d.append(rocketPanel(id,o,false));
     const movement=movementPanel(id,o,false);if(movement)d.append(movement);
     if(o.note){const note=section('NOTIZ');note.append(el('div',o.note));d.append(note);}
     return d;
@@ -542,6 +761,7 @@ function popMk(id){
   let rg=null;
   if(RAD.includes(o.t)){ rg=el('input'); rg.type='range'; rg.min=0; rg.max=300; rg.value=o.r||0; const lb=el('small');
     const up=()=>lb.textContent='Radius: '+(+rg.value>0?fmt(+rg.value):'aus'); rg.oninput=up; up(); const radius=section('WIRKUNGSBEREICH');radius.append(lb,rg);d.append(radius); }
+  if(o.t==='silo')d.append(rocketPanel(id,o,true));
   const movement=movementPanel(id,o,true);if(movement)d.append(movement);
   const notes=section('NOTIZ');notes.append(nt);d.append(notes,
     btn('Speichern',()=>{o.n=i.value.trim()||T[0];o.s=st.value;o.note=nt.value.trim();o.priority=priority.value;delete o.code;delete o.unit;delete o.start;delete o.end;if(rg)o.r=+rg.value;save('markers',id,o,`${T[0]} „${o.n}“ geändert`);}),
@@ -573,13 +793,34 @@ function clusterPopup(ids){
   ids.forEach(id=>{const o=data.markers[id],item=btn('',()=>{map.closePopup();focusMarker(id);});item.className='cluster-item';item.append(el('span',o.n||TYPES[o.t][0]));const info=el('small',`${TYPES[o.t][0]} · ${STATUS[o.s||'a']}`);info.style.color=STATUS_COLOR[o.s||'a'];item.append(info);list.append(item);});
   d.append(list);return d;
 }
+function markerPopupOptions(){
+  const size=map.getSize();
+  return{maxWidth:Math.max(120,Math.min(360,size.x-48)),maxHeight:Math.max(60,Math.min(460,size.y-52)),autoPan:false,autoPanPadding:[16,16]};
+}
+function fitPopupToMap(popup){
+  const element=popup&&popup.getElement();
+  if(!element||!map.hasLayer(popup))return;
+  const mapRect=map.getContainer().getBoundingClientRect(),popupRect=element.getBoundingClientRect(),pad=12;
+  let dx=0,dy=0;
+  if(popupRect.left<mapRect.left+pad)dx=mapRect.left+pad-popupRect.left;
+  else if(popupRect.right>mapRect.right-pad)dx=mapRect.right-pad-popupRect.right;
+  if(popupRect.top<mapRect.top+pad)dy=mapRect.top+pad-popupRect.top;
+  else if(popupRect.bottom>mapRect.bottom-pad)dy=mapRect.bottom-pad-popupRect.bottom;
+  if(dx||dy){
+    const point=map.latLngToContainerPoint(popup.getLatLng());
+    popup.setLatLng(map.containerPointToLatLng(L.point(point.x+dx,point.y+dy)));
+  }
+}
+map.on('popupopen',e=>setTimeout(()=>fitPopupToMap(e.popup),0));
+map.on('moveend zoomend resize',()=>{if(map._popup)requestAnimationFrame(()=>fitPopupToMap(map._popup));});
 function openMarkerPopup(id){
   const o=data.markers[id];if(!o)return;
   const marker=mk[id];if(!marker){focusMarker(id);return;}
   if(MOBILE_TYPES.has(o.t)){
-    const popup=L.popup({maxWidth:360,autoPan:false}).setLatLng(marker.getLatLng()).setContent(popMk(id));
+    const popup=L.popup(markerPopupOptions()).setLatLng(marker.getLatLng()).setContent(popMk(id));
     map.once('popupclose',()=>{if(clusterFocus===id){clusterFocus=null;renderMarkers();}});
     popup.openOn(map);
+    setTimeout(()=>fitPopupToMap(popup),0);
   }
   else marker.openPopup();
 }
@@ -603,10 +844,10 @@ function renderMarkers(){
     if(items.length>1){
       const x=items.reduce((sum,item)=>sum+item.point.x,0)/items.length,y=items.reduce((sum,item)=>sum+item.point.y,0)/items.length;
       const center=map.unproject(L.point(x,y),zoom),ids=items.map(item=>item.id);
-      L.marker(center,{icon:clusterIcon(ids.length),keyboard:false}).bindPopup(()=>clusterPopup(ids),{maxWidth:300}).addTo(markerLayer);
+      L.marker(center,{icon:clusterIcon(ids.length),keyboard:false}).bindPopup(()=>clusterPopup(ids),markerPopupOptions()).addTo(markerLayer);
     }else{
       const {id,o}=items[0],position=markerPosition(o),ll=pt(position.x,position.y),marker=mk[id]=L.marker(ll,{icon:icon(o),title:`${o.n} · ${STATUS[o.s||'a']}`,draggable:edit&&!MOBILE_TYPES.has(o.t),zIndexOffset:MOBILE_TYPES.has(o.t)?2000:0});
-      if(!MOBILE_TYPES.has(o.t))marker.bindPopup(()=>popMk(id));
+      if(!MOBILE_TYPES.has(o.t))marker.bindPopup(()=>popMk(id),markerPopupOptions());
       marker.addTo(markerLayer);
       marker.on('click',()=>{if(tool==='link'){marker.closePopup();if(!linkA)linkA=id;else{if(linkA!==id)mkLink(linkA,id);linkA=null;}return;}if(MOBILE_TYPES.has(o.t))openMarkerPopup(id);});
       marker.on('popupclose',()=>{if(clusterFocus===id){clusterFocus=null;renderMarkers();}});
@@ -616,7 +857,7 @@ function renderMarkers(){
   renderList();
 }
 function redraw(){
-  group.clearLayers();group.addLayer(markerLayer);sh={};renderMarkers();
+  group.clearLayers();group.addLayer(markerLayer);group.addLayer(launchLayer);group.addLayer(launchPreviewLayer);sh={};renderMarkers();renderLaunches();renderLaunchPreview();
   for(const [id,o] of Object.entries(data.shapes)){
     if(hidden.has(o.k)) continue; let g;
     if(o.k==='text'){
@@ -632,7 +873,7 @@ function redraw(){
       if(['arrow','route'].includes(o.k)&&p.length>1){ const a=p[p.length-2], b=p[p.length-1], deg=-Math.atan2(b[0]-a[0],b[1]-a[1])*180/Math.PI;
         L.marker(b,{interactive:false,icon:L.divIcon({className:'',html:`<div class="ah" style="color:${o.c};transform:rotate(${deg}deg)">▶</div>`,iconSize:[20,20],iconAnchor:[10,10]})}).addTo(group); }
     }
-    sh[id]=g.bindPopup(()=>popSh(id)).addTo(group);
+    sh[id]=g.bindPopup(()=>popSh(id),markerPopupOptions()).addTo(group);
     if(edit&&['line','zone','arrow','route'].includes(o.k)) o.p.forEach((q,i)=>{
       const h=L.marker(pt(q[0],q[1]),{draggable:true,icon:L.divIcon({className:'',html:'<div class="vertex-handle"></div>',iconSize:[12,12],iconAnchor:[6,6]}),zIndexOffset:1000}).addTo(group);
       h.on('click',L.DomEvent.stopPropagation);
@@ -670,7 +911,7 @@ async function sync(){
     if(JSON.stringify(n)!==JSON.stringify(data) && !popOpen){ data=n; redraw(); } }
   catch(e){ setSt(false); }
 }
-function resetTemp(){ pts=[]; mpts=[]; linkA=null; movementDraft=null;const note=$('#movement-instructions');if(note)note.classList.remove('on');[tmp,mline,mlab].forEach(l=>l&&map.removeLayer(l));tmp=mline=mlab=null; }
+function resetTemp(){ pts=[];mpts=[];linkA=null;movementDraft=null;launchTargetDraft=null;launchPreviewLayer.clearLayers();const note=$('#movement-instructions');if(note)note.classList.remove('on');[tmp,mline,mlab].forEach(l=>l&&map.removeLayer(l));tmp=mline=mlab=null; }
 function sel(){ for(const k in btns) btns[k].classList.toggle('on',k===tool); document.body.classList.toggle('tooling',!!tool); }
 function setTool(k){ if(!edit&&k&&k!=='measure') return; tool=k===tool?null:k; resetTemp(); sel(); }
 function preview(){
@@ -691,8 +932,13 @@ async function finish(){
 }
 map.on('popupopen',()=>popOpen=1); map.on('popupclose',()=>popOpen=0);
 map.on('click',async e=>{
-  if(!cmd()||!tool) return;
+  if(!cmd())return;
   const x=e.latlng.lng/1000, y=1-e.latlng.lat/1000;
+  if(launchTargetDraft){
+    if(e.originalEvent&&e.originalEvent.target&&e.originalEvent.target.closest&&e.originalEvent.target.closest('.leaflet-marker-icon'))return;
+    acceptRocketTarget([x,y]);return;
+  }
+  if(!tool)return;
   if(movementDraft){pts.push([x,y]);preview();return;}
   if(DRAW.includes(tool)){ pts.push([x,y]); preview(); return; }
   if(tool==='measure'){ mpts.push(e.latlng); mpreview(); return; }
@@ -797,7 +1043,7 @@ function boot(done){
     matchMedia('(prefers-reduced-motion:reduce)').matches?10:450);
 }
 let pendingRole=null, presenceTimer=null, presenceId=newId(), gridLayer=L.layerGroup(), undoStack=[], lastSavedSnapshot=null, audioCtx=null, soundsOn=localStorage.getItem('ls_sounds')!=='off', emergencyAction=null, emergencyBlocked=false, emergencyWatchTimer=null;
-function copyState(){ return JSON.parse(JSON.stringify({markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{}})); }
+function copyState(){ return JSON.parse(JSON.stringify({markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{},launches:data.launches||{}})); }
 function stateEqual(a,b){ return JSON.stringify(a)===JSON.stringify(b); }
 function playTone(kind='click'){
   if(!soundsOn) return;
@@ -872,8 +1118,9 @@ function showEmergency404(){
   if(emergencyBlocked)return;
   emergencyBlocked=true;sessionStorage.removeItem('ls');clearInterval(timer);clearInterval(clock);clearInterval(presenceTimer);presenceTimer=null;
   if(movementTimer)clearInterval(movementTimer);movementTimer=null;
+  if(launchSyncTimer)clearInterval(launchSyncTimer);launchSyncTimer=null;
   tool=null;resetTemp();document.body.classList.remove('cmd','pres','tooling');edit=false;
-  if(map.hasLayer(group))map.removeLayer(group);group.clearLayers();if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);
+  if(map.hasLayer(group))map.removeLayer(group);group.clearLayers();launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};$('#launch-hud').classList.remove('on');if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);
   $('#namegate').style.display='none';$('#gate').style.display='none';$('#emergency-404').style.display='grid';map.invalidateSize();
   emergencyWatchTimer=setInterval(async()=>{try{const state=await db.emergency();if(!state.active){clearInterval(emergencyWatchTimer);emergencyWatchTimer=null;emergencyBlocked=false;$('#emergency-404').style.display='none';$('#gate').style.display='grid';$('#gate-error').textContent='Notabschaltung aufgehoben. Bitte erneut anmelden.';}}catch(e){console.warn('Notabschaltungsstatus wird erneut geprüft.',e);}},5000);
 }
@@ -938,9 +1185,10 @@ function enter(anim,role){
     document.body.classList.add('cmd'); setLayer(cur||'karte'); map.doubleClickZoom.disable();
     restoreSidebarSettings();
     $('#seal').textContent=edit?'OPS':VIEW_SEAL; $('#bt').textContent='Department of Defense'; $('#bs').textContent='Strategische Lageübersicht';
-    buildSide(); addExtras(); applyDef(); group.addTo(map); addGrid(); map.invalidateSize(); map.fitBounds(KB);
+    buildSide(); addExtras(); applyDef(); group.addTo(map);redraw();addGrid();map.invalidateSize();map.fitBounds(KB);
     lastSavedSnapshot=copyState();sync();heartbeatPresence();timer=setInterval(sync,5000);presenceTimer=setInterval(heartbeatPresence,8000);
     if(movementTimer)clearInterval(movementTimer);movementTimer=setInterval(animateMovers,100);
+    if(launchSyncTimer)clearInterval(launchSyncTimer);launchSyncTimer=setInterval(syncLaunches,1000);
     const tick=()=>$('#clk').textContent=new Date().toLocaleTimeString('de-DE'); tick(); clock=setInterval(tick,1000);
   };
   anim?boot(go):go();
@@ -951,7 +1199,7 @@ async function switchMap(name){
   try{
     await db.del('presence',presenceId).catch(e=>console.warn('Vorherige Kartenpräsenz konnte nicht entfernt werden.',e));
     map.closePopup();popOpen=0;activeMap=name;mapGeneration++;backupRun='';tool=null;resetTemp();sel();undoStack=[];data=EMPTY();data.presence={};
-    group.clearLayers();mk={};sh={};renderList();renderLog();applyDef();
+    group.clearLayers();group.addLayer(markerLayer);group.addLayer(launchLayer);group.addLayer(launchPreviewLayer);launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};mk={};sh={};renderList();renderLog();applyDef();renderLaunches();
     setLayer(cur||'karte');map.fitBounds(KB);lastSavedSnapshot=copyState();
     const b=$('#undo-btn');if(b)b.disabled=true;
     await sync();await heartbeatPresence();
@@ -960,9 +1208,10 @@ async function switchMap(name){
 function leave(){
   if(presenceTimer) clearInterval(presenceTimer); presenceTimer=null;
   if(movementTimer)clearInterval(movementTimer);movementTimer=null;
+  if(launchSyncTimer)clearInterval(launchSyncTimer);launchSyncTimer=null;
   db.del('presence',presenceId).catch(()=>{});
   sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel(); pres(false);
-  map.removeLayer(group); group.clearLayers(); if(map.hasLayer(gridLayer)) map.removeLayer(gridLayer); gridLayer.clearLayers();
+  map.removeLayer(group);group.clearLayers();launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};$('#launch-hud').classList.remove('on');if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);gridLayer.clearLayers();
   data=EMPTY(); edit=false; undoStack=[]; lastSavedSnapshot=null; activeMap='ls'; map.doubleClickZoom.enable();
   $('#alarm').classList.remove('on'); document.body.classList.remove('cmd'); setLayer(cur||'karte');
   $('#seal').textContent='LS'; $('#bt').textContent='Los Santos Government'; $('#bs').textContent='Amt für Stadtplanung und Geoinformation';
@@ -979,8 +1228,8 @@ async function undo(){
   if(!edit||!undoStack.length) return;
   const target=undoStack[undoStack.length-1];
   try{
-    await Promise.all(['markers','shapes','meta'].map(k=>db.putAll(k,target[k]||{})));
-    undoStack.pop(); data.markers=target.markers||{}; data.shapes=target.shapes||{}; data.meta=target.meta||{};
+    await Promise.all(['markers','shapes','meta','launches'].map(k=>db.putAll(k,target[k]||{})));
+    undoStack.pop(); data.markers=target.markers||{}; data.shapes=target.shapes||{}; data.meta=target.meta||{};data.launches=target.launches||{};
     lastSavedSnapshot=copyState(); redraw(); logit('Letzte Änderung rückgängig gemacht'); playTone('login');
     const b=$('#undo-btn'); if(b) b.disabled=!edit||!undoStack.length;
   }catch(e){ setSt(false); alert('Rückgängig konnte nicht gespeichert werden. Bitte Verbindung prüfen.'); }
@@ -991,12 +1240,15 @@ async function sync(){
   try{
     const emergency=await db.emergency();
     if(emergency.active){showEmergency404();return;}
-    const ks=['markers','shapes','meta','log','presence'], r=await Promise.all(ks.map(k=>db.all(k))), n={};
+    const ks=['markers','shapes','meta','log','presence','launches'], r=await Promise.all(ks.map(k=>db.all(k))), n={};
     if(generation!==mapGeneration)return;
     ks.forEach((k,i)=>n[k]=r[i]); setSt(true);
     const changed=JSON.stringify({markers:n.markers,shapes:n.shapes,meta:n.meta})!==JSON.stringify({markers:data.markers,shapes:data.shapes,meta:data.meta});
     data.presence=n.presence||{};
     if(changed&&!popOpen){ data.markers=n.markers; data.shapes=n.shapes; data.meta=n.meta; undoStack=[]; redraw(); lastSavedSnapshot=copyState(); const q=$('#search'); if(q&&q.value) q.oninput(); const b=$('#undo-btn'); if(b) b.disabled=true; }
+    if(JSON.stringify(n.launches)!==JSON.stringify(data.launches||{})){
+      data.launches=n.launches||{};undoStack=[];lastSavedSnapshot=copyState();const b=$('#undo-btn');if(b)b.disabled=true;renderLaunches();
+    }
     if(!popOpen){ data.log=n.log; renderLog(); }
     renderOnline();
     await maybeCreateDailyBackup(generation);
@@ -1019,7 +1271,7 @@ async function maybeCreateDailyBackup(generation){
     const backups=await db.all('backups');
     if(generation!==mapGeneration)return;
     if(!backups[today]){
-      backups[today]={time:Date.now(),map:activeMap,markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{}};
+      backups[today]={time:Date.now(),map:activeMap,markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{},launches:data.launches||{}};
       const keep=Object.keys(backups).sort((a,b)=>b.localeCompare(a)).slice(0,30),trimmed={};
       keep.forEach(date=>trimmed[date]=backups[date]);
       await db.putAll('backups',trimmed);
@@ -1036,9 +1288,9 @@ async function restoreBackup(){
     const backups=await db.all('backups'),snapshot=backups[date];
     if(!snapshot||!snapshot.markers||!snapshot.shapes||!snapshot.meta)throw new Error('Sicherung ist unvollständig.');
     const before=copyState();
-    await Promise.all(['markers','shapes','meta'].map(k=>db.putAll(k,snapshot[k])));
+    await Promise.all(['markers','shapes','meta','launches'].map(k=>db.putAll(k,snapshot[k]||{})));
     undoStack.push(before);if(undoStack.length>50)undoStack.shift();
-    data.markers=snapshot.markers;data.shapes=snapshot.shapes;data.meta=snapshot.meta;
+    data.markers=snapshot.markers;data.shapes=snapshot.shapes;data.meta=snapshot.meta;data.launches=snapshot.launches||{};
     lastSavedSnapshot=copyState();redraw();logit(`Sicherung vom ${date} wiederhergestellt`);
     const b=$('#undo-btn');if(b)b.disabled=false;setSt(true);
   }catch(e){setSt(false);console.error('Sicherung konnte nicht wiederhergestellt werden.',e);alert('Sicherung konnte nicht wiederhergestellt werden. Bitte Verbindung und Sicherungsdaten prüfen.');}
@@ -1088,6 +1340,26 @@ function exportVisibleMap(ctx,size,logoImages={}){
     ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.font=`600 ${Math.max(14,12*u)}px "Barlow Condensed",sans-serif`;
     ctx.fillText(TYPES[o.t][1],0,0);
+    ctx.restore();
+  }
+  const now=Date.now();
+  for(const launch of Object.values(data.launches||{})){
+    if(!validLaunch(launch)||launch.cancelled)continue;
+    const fromX=px(+launch.from[0]),fromY=py(+launch.from[1]),targetX=px(+launch.target[0]),targetY=py(+launch.target[1]);
+    const launchAt=+launch.launchAt,impactAt=launchAt+(+launch.flightMs||LAUNCH_FLIGHT_MS),color=ROCKET_TYPES[launch.rocket].color;
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=2*u;ctx.setLineDash(now<launchAt?[4*u,8*u]:[8*u,6*u]);
+    ctx.beginPath();ctx.moveTo(fromX,fromY);ctx.lineTo(targetX,targetY);ctx.stroke();ctx.setLineDash([]);
+    if(now>=impactAt){
+      ctx.beginPath();ctx.arc(targetX,targetY,launchRadius(launch)*u,0,Math.PI*2);
+      ctx.fillStyle='#ff784422';ctx.fill();ctx.strokeStyle='#ff9c5e';ctx.setLineDash([7*u,5*u]);ctx.stroke();ctx.setLineDash([]);
+    }else{
+      ctx.beginPath();ctx.arc(targetX,targetY,8*u,0,Math.PI*2);ctx.strokeStyle='#f0b24a';ctx.stroke();
+      const position=now<launchAt?{x:+launch.from[0],y:+launch.from[1]}:rocketPosition(launch,now);
+      const angle=Math.atan2(+launch.target[0]-+launch.from[0],-(+launch.target[1]-+launch.from[1]));
+      ctx.translate(px(position.x),py(position.y));ctx.rotate(angle);
+      ctx.fillStyle='#fff1c1';ctx.beginPath();ctx.moveTo(0,-10*u);ctx.lineTo(4*u,-4*u);ctx.lineTo(3*u,6*u);ctx.lineTo(-3*u,6*u);ctx.lineTo(-4*u,-4*u);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#ff6b65';ctx.beginPath();ctx.moveTo(-2*u,6*u);ctx.lineTo(0,11*u);ctx.lineTo(2*u,6*u);ctx.closePath();ctx.fill();
+    }
     ctx.restore();
   }
   for(const [id,o] of Object.entries(data.shapes||{})){
@@ -1168,13 +1440,15 @@ async function exportPng(){
   finally{if(button)button.disabled=false;}
 }
 function exportJson(){
-  const payload={version:2,exportedAt:new Date().toISOString(),markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{},log:data.log||{}};
+  const payload={version:3,exportedAt:new Date().toISOString(),markers:data.markers||{},shapes:data.shapes||{},meta:data.meta||{},log:data.log||{},launches:data.launches||{}};
   const b=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}), a=el('a'), url=URL.createObjectURL(b);
   a.href=url; a.download='lagebild-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 function validBackup(j){
   const obj=v=>v&&typeof v==='object'&&!Array.isArray(v), keys=o=>Object.keys(o).length<=10000;
-  if(!obj(j)||!obj(j.markers)||!obj(j.shapes)||!obj(j.meta)||!keys(j.markers)||!keys(j.shapes)) return false;
+  if(!obj(j)||!obj(j.markers)||!obj(j.shapes)||!obj(j.meta)||!keys(j.markers)||!keys(j.shapes)||
+    (j.launches!==undefined&&(!obj(j.launches)||!keys(j.launches)))) return false;
+  for(const launch of Object.values(j.launches||{}))if(!validLaunch(launch))return false;
   for(const m of Object.values(j.markers)){
     if(!obj(m)||!TYPES[m.t]||!Number.isFinite(+m.x)||!Number.isFinite(+m.y)||m.x<0||m.x>1||m.y<0||m.y>1||!['a','b','z'].includes(m.s||'a')) return false;
     if(m.mv!==undefined){
@@ -1200,9 +1474,9 @@ async function importJson(e){
     if(!validBackup(j)){ alert('Die Datei ist kein gültiges Lagebild-Backup oder enthält ungültige Einträge.'); return; }
     if(!confirm('Alle aktuellen Einträge werden ersetzt. Vorher wird automatisch ein Backup heruntergeladen. Fortfahren?')) return;
     exportJson();
-    const next={markers:j.markers,shapes:j.shapes,meta:j.meta,log:j.log||{}}, before=copyState();
+    const next={markers:j.markers,shapes:j.shapes,meta:j.meta,log:j.log||{},launches:j.launches||{}}, before=copyState();
     undoStack.push(before); if(undoStack.length>50) undoStack.shift(); const ub=$('#undo-btn'); if(ub) ub.disabled=false;
-    await Promise.all(['markers','shapes','meta','log'].map(k=>db.putAll(k,next[k])));
+    await Promise.all(['markers','shapes','meta','log','launches'].map(k=>db.putAll(k,next[k])));
     Object.assign(data,next); lastSavedSnapshot=copyState(); redraw(); logit('Backup eingespielt'); setSt(true);
   }catch(err){ setSt(false); alert('Backup konnte nicht gelesen oder gespeichert werden. Die Datenbankverbindung prüfen.'); }
 }
