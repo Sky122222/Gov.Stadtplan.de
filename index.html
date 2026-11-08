@@ -418,7 +418,7 @@ const STATUS={a:'Aktiv',b:'Im Bau',z:'Zerstört'}, STATUS_COLOR={a:'#a4d6b8',b:'
 const KINDS={line:'Linie',zone:'Zone',arrow:'Pfeil',route:'Route',text:'Text',link:'Verbindung'}, DRAW=['line','zone','arrow','route'];
 const DC={5:'#6fa8dc',4:'#8fe3a8',3:'#f0d34a',2:'#ff5a4d',1:'#ffffff'};
 const ROCKET_TYPES={small:{name:'Klein',radius:20,color:'#8fe3a8'},medium:{name:'Mittel',radius:50,color:'#f0b24a'},large:{name:'Groß',radius:100,color:'#ff6b65'}};
-const LAUNCH_COUNTDOWN_MS=5000, LAUNCH_FLIGHT_MS=4200;
+const LAUNCH_COUNTDOWN_MS=5000, LAUNCH_FLIGHT_MS=4200, LAUNCH_DISPLAY_MS=10000;
 const isRocketType=key=>Object.prototype.hasOwnProperty.call(ROCKET_TYPES,key);
 function validLaunch(launch){
   const point=p=>Array.isArray(p)&&p.length===2&&Number.isFinite(+p[0])&&Number.isFinite(+p[1])&&+p[0]>=0&&+p[0]<=1&&+p[1]>=0&&+p[1]<=1;
@@ -437,7 +437,7 @@ const EMPTY=()=>({markers:{},shapes:{},meta:{},log:{},launches:{}});
 let data=EMPTY(), mk={}, sh={}, tool=null, col=COLORS[0], pts=[], mpts=[], tmp=null, mline=null, mlab=null, btns={}, hidden=new Set(), busy=0, popOpen=0, timer=null, clock=null, edit=false, user='Unbekannt', linkA=null, lastEsc=0;
 const group=L.layerGroup(), markerLayer=L.layerGroup(), cmd=()=>document.body.classList.contains('cmd');
 const launchLayer=L.layerGroup(),launchPreviewLayer=L.layerGroup();
-let clusterFocus=null, sidebarWidth=310, movementTimer=null, launchSyncTimer=null, movementDraft=null, launchTargetDraft=null, launchAnimationLayers={};
+let clusterFocus=null, sidebarWidth=310, movementTimer=null, launchSyncTimer=null, launchExpiryTimer=null, movementDraft=null, launchTargetDraft=null, launchAnimationLayers={};
 const fmt=u=>M_PER_UNIT?((u*=M_PER_UNIT)>=1000?(u/1000).toFixed(1)+' km':Math.round(u)+' m'):Math.round(u)+' E';
 const pt=(x,y)=>[1000*(1-y),1000*x];
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -691,11 +691,16 @@ function updateLaunchHud(now=Date.now()){
   hud.classList.add('on');
 }
 function renderLaunches(){
+  if(launchExpiryTimer)clearTimeout(launchExpiryTimer);
+  launchExpiryTimer=null;
   launchLayer.clearLayers();launchAnimationLayers={};
-  const now=Date.now();
+  const now=Date.now();let nextExpiry=Infinity;
   for(const [id,launch] of Object.entries(data.launches||{})){
     if(!validLaunch(launch)||launch.cancelled)continue;
     const from=targetLatLng(launch.from),to=targetLatLng(launch.target),launchAt=+launch.launchAt,impactAt=launchAt+(+launch.flightMs||LAUNCH_FLIGHT_MS),color=ROCKET_TYPES[launch.rocket].color;
+    const expiresAt=impactAt+LAUNCH_DISPLAY_MS;
+    if(now>=expiresAt)continue;
+    nextExpiry=Math.min(nextExpiry,expiresAt);
     L.polyline([from,to],{color,weight:2,dashArray:now<launchAt?'3 8':'8 6',opacity:now<launchAt?.35:.7,interactive:false}).addTo(launchLayer);
     if(now>=impactAt){
       L.circle(to,{radius:launchRadius(launch),color:'#ff9c5e',weight:2,dashArray:'7 5',fillColor:'#ff7844',fillOpacity:.09,interactive:false}).addTo(launchLayer);
@@ -707,6 +712,7 @@ function renderLaunches(){
       launchAnimationLayers[id]=L.marker(pt(position.x,position.y),{interactive:false,keyboard:false,zIndexOffset:3000,icon:rocketIcon(angle)}).addTo(launchLayer);
     }
   }
+  if(Number.isFinite(nextExpiry))launchExpiryTimer=setTimeout(renderLaunches,Math.max(0,nextExpiry-now+20));
   updateLaunchCounters();updateLaunchHud(now);
 }
 function animateRocketLaunches(now=Date.now()){
@@ -1119,6 +1125,7 @@ function showEmergency404(){
   emergencyBlocked=true;sessionStorage.removeItem('ls');clearInterval(timer);clearInterval(clock);clearInterval(presenceTimer);presenceTimer=null;
   if(movementTimer)clearInterval(movementTimer);movementTimer=null;
   if(launchSyncTimer)clearInterval(launchSyncTimer);launchSyncTimer=null;
+  if(launchExpiryTimer)clearTimeout(launchExpiryTimer);launchExpiryTimer=null;
   tool=null;resetTemp();document.body.classList.remove('cmd','pres','tooling');edit=false;
   if(map.hasLayer(group))map.removeLayer(group);group.clearLayers();launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};$('#launch-hud').classList.remove('on');if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);
   $('#namegate').style.display='none';$('#gate').style.display='none';$('#emergency-404').style.display='grid';map.invalidateSize();
@@ -1211,7 +1218,7 @@ function leave(){
   if(launchSyncTimer)clearInterval(launchSyncTimer);launchSyncTimer=null;
   db.del('presence',presenceId).catch(()=>{});
   sessionStorage.removeItem('ls'); clearInterval(timer); clearInterval(clock); tool=null; resetTemp(); sel(); pres(false);
-  map.removeLayer(group);group.clearLayers();launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};$('#launch-hud').classList.remove('on');if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);gridLayer.clearLayers();
+  map.removeLayer(group);group.clearLayers();launchLayer.clearLayers();launchPreviewLayer.clearLayers();launchAnimationLayers={};if(launchExpiryTimer)clearTimeout(launchExpiryTimer);launchExpiryTimer=null;$('#launch-hud').classList.remove('on');if(map.hasLayer(gridLayer))map.removeLayer(gridLayer);gridLayer.clearLayers();
   data=EMPTY(); edit=false; undoStack=[]; lastSavedSnapshot=null; activeMap='ls'; map.doubleClickZoom.enable();
   $('#alarm').classList.remove('on'); document.body.classList.remove('cmd'); setLayer(cur||'karte');
   $('#seal').textContent='LS'; $('#bt').textContent='Los Santos Government'; $('#bs').textContent='Amt für Stadtplanung und Geoinformation';
@@ -1347,6 +1354,7 @@ function exportVisibleMap(ctx,size,logoImages={}){
     if(!validLaunch(launch)||launch.cancelled)continue;
     const fromX=px(+launch.from[0]),fromY=py(+launch.from[1]),targetX=px(+launch.target[0]),targetY=py(+launch.target[1]);
     const launchAt=+launch.launchAt,impactAt=launchAt+(+launch.flightMs||LAUNCH_FLIGHT_MS),color=ROCKET_TYPES[launch.rocket].color;
+    if(now>=impactAt+LAUNCH_DISPLAY_MS)continue;
     ctx.save();ctx.strokeStyle=color;ctx.lineWidth=2*u;ctx.setLineDash(now<launchAt?[4*u,8*u]:[8*u,6*u]);
     ctx.beginPath();ctx.moveTo(fromX,fromY);ctx.lineTo(targetX,targetY);ctx.stroke();ctx.setLineDash([]);
     if(now>=impactAt){
